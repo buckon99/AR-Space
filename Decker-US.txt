@@ -1,0 +1,3 @@
+1. As an interior designer, I want to have multiple items to be displayed, so I can plan the entire space.
+2. As a user who needs to move, I want the total amount of space used by selected items, so I know how much space I will need for them.
+3. As a user, I want a 3D representation of an item, so I can see it from multiple angles.
