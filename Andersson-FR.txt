@@ -1,0 +1,7 @@
+﻿1. The system shall completely load augmented reality object within 2 seconds (0 - 2.0] of item selection. 
+
+
+1. The system shall let users browse from these online retailers: IKEA, Amazon, eBay, and Bed Bath & Beyond.
+
+
+1. The system shall link the user’s accounts on online retailer sites to their account on the system and use the linked accounts for checkout and personalized searching.
