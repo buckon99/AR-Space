@@ -1,0 +1,6 @@
+# FUNCTIONAL REQUIREMENTS
+
+# The system shall provide a search page for searching and selecting amazon products
+# The system shall provide an augmented reality view that shows a cube matching the dimensions
+of a selected product
+# The system shall redirect the user to the amazon page for a product by clicking a button
