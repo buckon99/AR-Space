@@ -1,0 +1,5 @@
+As a general user, I would like to search for a specific item online and check if it fits in a space in my house using the augmented reality tool, so I can be sure it will fit before I buy the item.
+
+As a general user, I would like to search with the parameters being the dimensions read from the tool, so I can find items that I know will fit in the space.
+
+As a general user, I would like to see similar items to the one I have just used with the tool, in the correct dimensions, so that I can make sure I am getting the best item that fits in the space.

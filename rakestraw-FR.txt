@@ -1,0 +1,5 @@
+The system shall provide an augmented reality display of an item in a space provide by the users camera.
+
+The system shall provide a list of available items with dimensions taken from the augmented reality tool.
+
+The system shall provide a determination if a selected item will fit in the given space.
