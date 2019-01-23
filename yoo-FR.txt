@@ -1,0 +1,8 @@
+# FUNCTIONAL REQUIREMENTS
+
+# The system shall take in dimensional data (of a furniture item) from a
+  website’s API.
+# The system shall display a 3-dimensional rectangular prism that matches the
+  dimensions of the data input from the website.
+# The system shall allow the 3-dimensional rectangular prism to rotate on the
+  x and y axes (based on the user’s selected option.

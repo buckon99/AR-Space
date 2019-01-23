@@ -1,0 +1,13 @@
+# USER STORIES
+
+# As a homeowner, I want to be able to spatially see how furniture items will
+  fit into my home, so that I can avoid wrongly visualizing the placement and
+  dimensions of the furniture.
+
+# As a model home decorator, I want to know where every last piece of furniture
+  will be placed before decorating the home, so that I can expedite the process
+  of furniture placement.
+
+# As a delivery truck driver, I want to be able to make sure that the furniture
+  will fit into the truck, so that I can make arrangements ahead of time if a
+  bigger truck is needed.
