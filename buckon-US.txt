@@ -1,0 +1,10 @@
+# USER STORIES
+
+# As an online shopper, I want to know how much space something takes up, so that
+I know the product will fit before I buy it
+  
+# As a busy person, I want to know if a product I am looking at is the right size,
+so that I know its the right size before buying it or having to measure out the size
+
+# As a spatially challenged person, I want to use my phone to see the size of things,
+so that I can easily tell if something fits where I want it 
