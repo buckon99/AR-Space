@@ -1,7 +1,8 @@
-package com.jbuckon.myapplication
+package com.csc309.arspace
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.csc309.arspace.R
 
 class MainActivity : AppCompatActivity() {
 

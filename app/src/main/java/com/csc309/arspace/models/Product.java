@@ -1,4 +1,4 @@
-package com.jbuckon.myapplication.models;
+package com.csc309.arspace.models;
 
 public class Product {
     private String title;
