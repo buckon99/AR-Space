@@ -1,6 +1,7 @@
 package com.csc309.arspace.models;
 
 public class Product {
+
     private String title;
     private int width;
     private int height;
