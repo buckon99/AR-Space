@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SignUp extends AppCompatActivity {
 
@@ -33,15 +34,19 @@ public class SignUp extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (confirmPassword(password.getText().toString(), confirmPassword.getText().toString()) == false) {
-                    // TODO: do something to tell user that the passwords don't match
+                // check if passwords match AND if all fields are entered
+                if (validateEntries() &&
+                        confirmPassword(password.getText().toString(), confirmPassword.getText().toString())) {
+                    // TODO: create a new "User" object and save information in a database
+                    // take user to main screen
+                    Intent goToMainScreen = new Intent(SignUp.this, MainScreen.class);
+                    startActivity(goToMainScreen);
                 }
-
             }
         });
 
         // if you click the login text...
-        login.setOnClickListener(new View.OnClickListener() {
+         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent goToLoginScreen = new Intent(SignUp.this, Login.class);
@@ -52,15 +57,27 @@ public class SignUp extends AppCompatActivity {
 
     // checks if the two given passwords match
     private boolean confirmPassword(String pw, String pwConf) {
-        return (pw.equals(pwConf));
+        if (!(pw.equals(pwConf))) {
+            Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
-    // returns
+    // checks if all required fields are entered
     private boolean validateEntries() {
         String userID = this.userID.getText().toString();
         String email = this.email.getText().toString();
         String password = this.password.getText().toString();
 
-        return (!userID.isEmpty() && !email.isEmpty() && !password.isEmpty());
+        if (userID.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter all required fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
