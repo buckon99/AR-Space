@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "160665022150-avbi5tm275vq0aug4gbliqv0j61hbut0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.csc309.arspace",
+            "certificate_hash": "9299ed00127a381c381fde5f825cc023ed76983d"
+          }
+        },
+        {
           "client_id": "160665022150-c99bei43kotrpeq79n2oq9mri690hm52.apps.googleusercontent.com",
           "client_type": 3
         }
