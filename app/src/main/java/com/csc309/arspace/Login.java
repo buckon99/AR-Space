@@ -53,7 +53,7 @@ public class Login extends AppCompatActivity {
 
         // for now, hardcode validation process
         if (id.equals("arspace") && pw.equals("12345")) {
-            Intent goToMainScreen = new Intent(Login.this, MainScreen.class);
+            Intent goToMainScreen = new Intent(Login.this, MainActivity.class);
             startActivity(goToMainScreen);
         }
     }

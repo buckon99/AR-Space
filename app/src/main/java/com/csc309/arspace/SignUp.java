@@ -39,7 +39,7 @@ public class SignUp extends AppCompatActivity {
                         confirmPassword(password.getText().toString(), confirmPassword.getText().toString())) {
                     // TODO: create a new "User" object and save information in a database
                     // take user to main screen
-                    Intent goToMainScreen = new Intent(SignUp.this, MainScreen.class);
+                    Intent goToMainScreen = new Intent(SignUp.this, MainActivity.class);
                     startActivity(goToMainScreen);
                 }
             }
