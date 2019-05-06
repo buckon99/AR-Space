@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "160665022150",
+    "firebase_url": "https://ar-space.firebaseio.com",
+    "project_id": "ar-space",
+    "storage_bucket": "ar-space.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160665022150:android:dba80f8bcb985bb8",
+        "android_client_info": {
+          "package_name": "com.csc309.arspace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "160665022150-c99bei43kotrpeq79n2oq9mri690hm52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9M_byEalGlhjSdAVp7Tlx5yLEHMXVhmE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "160665022150-c99bei43kotrpeq79n2oq9mri690hm52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

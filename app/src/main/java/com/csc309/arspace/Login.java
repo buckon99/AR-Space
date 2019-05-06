@@ -52,7 +52,7 @@ public class Login extends AppCompatActivity {
             // if not, send error message and re-do login
 
         // for now, hardcode validation process
-        if (id.equals("ayoo97") && pw.equals("12345")) {
+        if (id.equals("arspace") && pw.equals("12345")) {
             Intent goToMainScreen = new Intent(Login.this, MainScreen.class);
             startActivity(goToMainScreen);
         }
