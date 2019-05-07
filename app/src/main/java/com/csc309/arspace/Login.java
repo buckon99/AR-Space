@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
 
@@ -15,10 +16,14 @@ public class Login extends AppCompatActivity {
     private Button login;
     private TextView signup;
 
+    private FirebaseAuth firebaseAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         userID = findViewById(R.id.userID);
         password = findViewById(R.id.password);
@@ -29,7 +34,7 @@ public class Login extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validate(userID.getText().toString(), password.getText().toString());
+                validate(userID.getText().toString().trim(), password.getText().toString().trim());
             }
         });
 

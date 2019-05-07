@@ -1,6 +1,7 @@
 package com.csc309.arspace;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SignUp extends AppCompatActivity {
 
@@ -17,11 +22,13 @@ public class SignUp extends AppCompatActivity {
     private EditText confirmPassword;
     private Button signup;
     private TextView login;
-
+    private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         userID = findViewById(R.id.userID);
         email = findViewById(R.id.email);
@@ -36,11 +43,24 @@ public class SignUp extends AppCompatActivity {
             public void onClick(View view) {
                 // check if passwords match AND if all fields are entered
                 if (validateEntries() &&
-                        confirmPassword(password.getText().toString(), confirmPassword.getText().toString())) {
+                        confirmPassword(password.getText().toString().trim(),
+                                confirmPassword.getText().toString().trim())) {
                     // TODO: create a new "User" object and save information in a database
-                    // take user to main screen
-                    Intent goToMainScreen = new Intent(SignUp.this, MainActivity.class);
-                    startActivity(goToMainScreen);
+                    firebaseAuth.createUserWithEmailAndPassword(email.getText().toString().trim(),
+                            password.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(SignUp.this, "Successful", Toast.LENGTH_SHORT).show();
+                                // take user to main screen
+                                Intent goToMainScreen = new Intent(SignUp.this, MainActivity.class);
+                                startActivity(goToMainScreen);
+                            }
+                            else {
+                                Toast.makeText(SignUp.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -68,9 +88,9 @@ public class SignUp extends AppCompatActivity {
 
     // checks if all required fields are entered
     private boolean validateEntries() {
-        String userID = this.userID.getText().toString();
-        String email = this.email.getText().toString();
-        String password = this.password.getText().toString();
+        String userID = this.userID.getText().toString().trim();
+        String email = this.email.getText().toString().trim();
+        String password = this.password.getText().toString().trim();
 
         if (userID.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please enter all required fields", Toast.LENGTH_SHORT).show();
