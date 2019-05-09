@@ -92,6 +92,14 @@ public class MainActivity extends AppCompatActivity {
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Context context = view.getContext();
+                Intent intent = new Intent(context, SceneformActivity.class);
+                //intent.putExtra(ProductDetailFragment.ARG_ITEM_ID, item.id);
+
+                context.startActivity(intent);
+
+                /*
                 DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
@@ -107,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra(ProductDetailFragment.ARG_ITEM_ID, item.id);
 
                     context.startActivity(intent);
-                }
+                }*/
             }
         };
 
