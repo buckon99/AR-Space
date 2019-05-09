@@ -30,7 +30,7 @@ public class Login extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        email = findViewById(R.id.userID);
+        email = findViewById(R.id.email2);
         password = findViewById(R.id.password);
         login = findViewById(R.id.login_button);
         signup = findViewById(R.id.signup_button);
@@ -73,7 +73,7 @@ public class Login extends AppCompatActivity {
                                 startActivity(goToMainScreen);
                             }
                             else {
-                                Toast.makeText(Login.this, "Please enter all required fields", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Credentials Invalid", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
