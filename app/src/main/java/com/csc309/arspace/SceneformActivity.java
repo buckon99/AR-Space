@@ -59,11 +59,14 @@ public class SceneformActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_ux);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+        float width = (float)getIntent().getDoubleExtra("width", 0);
+        float height = (float)getIntent().getDoubleExtra("height", 0);
+        float length = (float)getIntent().getDoubleExtra("length", 0);
 
         MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.RED))
                 .thenAccept(
                         material -> {
-                            cubeRenderable = ShapeFactory.makeCube(new Vector3(0.3048f, 0.3048f, 0.3048f), Vector3.zero(), material);
+                            cubeRenderable = ShapeFactory.makeCube(new Vector3(width, height, length), Vector3.zero(), material);
                         });
 
 
@@ -80,7 +83,7 @@ public class SceneformActivity extends AppCompatActivity {
 
                     // Create the transformable andy and add it to the anchor.
                     //TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
-                    Node andy = new Node();
+                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
                     andy.setParent(anchorNode);
                     andy.setRenderable(cubeRenderable);
                 });

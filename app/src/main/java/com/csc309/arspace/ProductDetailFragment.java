@@ -9,10 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.csc309.arspace.dummy.DummyContent;
+import com.csc309.arspace.models.Product;
 
 /**
  * A fragment representing a single Product detail screen.
- * This fragment is either contained in a {@link ProductListActivity}
+ * This fragment is either contained in a {@link MainActivity}
  * in two-pane mode (on tablets) or a {@link ProductDetailActivity}
  * on handsets.
  */
@@ -26,7 +27,7 @@ public class ProductDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private Product mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -48,7 +49,7 @@ public class ProductDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mItem.getTitle());
             }
         }
     }
@@ -60,7 +61,7 @@ public class ProductDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.product_detail)).setText(mItem.details);
+            ((TextView) rootView.findViewById(R.id.product_detail)).setText(mItem.getType());
         }
 
         return rootView;

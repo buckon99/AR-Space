@@ -7,18 +7,24 @@ public class Product {
     private double width;
     private double height;
     private double length;
+    private String id;
     private String imgURL;
 
-    public Product(String title, String type,
+    public Product(String id, String title, String type,
                    double width, double height, double length,
                    String imgURL)
     {
+        this.id = id;
         this.title = title;
         this.type = type;
         this.width = width;
         this.height = height;
         this.length = length;
         this.imgURL = imgURL;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getImgURL() {
