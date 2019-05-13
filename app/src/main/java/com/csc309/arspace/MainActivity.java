@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.FrameLayout;
 import com.csc309.arspace.dummy.DummyContent;
+import com.csc309.arspace.models.Product;
 
 import java.util.List;
 
@@ -87,20 +88,23 @@ public class MainActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<MainActivity.SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final MainActivity mParentActivity;
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<Product> mValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 Context context = view.getContext();
+                Product item = (Product) view.getTag();
+
                 Intent intent = new Intent(context, SceneformActivity.class);
-                //intent.putExtra(ProductDetailFragment.ARG_ITEM_ID, item.id);
+                intent.putExtra("width", item.getWidth());
+                intent.putExtra("height", item.getHeight());
+                intent.putExtra("length", item.getLength());
 
                 context.startActivity(intent);
 
                 /*
-                DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
                     arguments.putString(ProductDetailFragment.ARG_ITEM_ID, item.id);
@@ -120,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         SimpleItemRecyclerViewAdapter(MainActivity parent,
-                                      List<DummyContent.DummyItem> items,
+                                      List<Product> items,
                                       boolean twoPane) {
             mValues = items;
             mParentActivity = parent;
@@ -136,8 +140,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final MainActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(mValues.get(position).getTitle());
+            holder.mContentView.setText(mValues.get(position).getTitle());
 
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
