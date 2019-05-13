@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'org.sonarqube'
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -44,7 +44,6 @@ dependencies {
 
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.ar.sceneform.plugin'
-
 
 sceneform.asset('sampledata/models/andy.obj',
         'default',
