@@ -30,7 +30,7 @@ public class Product {
 
 
     public double getPrice() { return price; }
-    public double setPrice(double p){ this.price = p; }
+    public void setPrice(double p){ this.price = p; }
     public String getImgURL() {
         return imgURL;
     }
