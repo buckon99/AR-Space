@@ -7,10 +7,12 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.FrameLayout;
 import com.csc309.arspace.dummy.DummyContent;
@@ -74,6 +76,18 @@ public class MainActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+        EditText search = findViewById(R.id.search);
+        search.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    //TODO: search goes here
+                    return true;
+                }
+                return false;
+            }
+        });
         frameLayout = findViewById(R.id.frameLayout);
         View recyclerView = findViewById(R.id.product_list);
         assert recyclerView != null;
