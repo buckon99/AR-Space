@@ -7,6 +7,7 @@ public class Product {
     private double width;
     private double height;
     private double length;
+    private double price;
     private String id;
     private String imgURL;
 
@@ -27,6 +28,9 @@ public class Product {
         return id;
     }
 
+
+    public double getPrice() { return price; }
+    public void setPrice(double p){ this.price = p; }
     public String getImgURL() {
         return imgURL;
     }

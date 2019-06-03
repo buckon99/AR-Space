@@ -27,6 +27,13 @@
         android:visibility="invisible"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="search"
+            android:autofillHints="search"
+            android:inputType="text"/>
         <include layout="@layout/product_list"/>
     </FrameLayout>
 
