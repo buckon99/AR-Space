@@ -13,7 +13,7 @@ public class Product {
 
     public Product(String id, String title, String type,
                    double width, double height, double length,
-                   String imgURL)
+                   String imgURL, double price)
     {
         this.id = id;
         this.title = title;
@@ -22,6 +22,7 @@ public class Product {
         this.height = height;
         this.length = length;
         this.imgURL = imgURL;
+        this.price = price;
     }
 
     public String getId() {
