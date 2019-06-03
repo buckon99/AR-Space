@@ -39,6 +39,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     // Provides ArFragment, and other Sceneform UX resources:
     implementation "com.google.ar.sceneform.ux:sceneform-ux:1.8.0"
+    // jsoup HTML parser library @ https://jsoup.org/
+    implementation "org.jsoup:jsoup:1.12.1"
 
 }
 
