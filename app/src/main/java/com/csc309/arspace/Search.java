@@ -33,7 +33,7 @@ public class Search
         sampleDatabase = new ArrayList<>();
         for(String title : titles)
         {
-            sampleDatabase.add(new Product(title,
+            sampleDatabase.add(new Product("0", title,
                     types[random.nextInt(types.length)],
                     random.nextDouble() * 20.0,
                     random.nextDouble() * 20.0,

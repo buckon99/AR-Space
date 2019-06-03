@@ -73,7 +73,7 @@ public class Login extends AppCompatActivity {
                                 startActivity(goToMainScreen);
                             }
                             else {
-                                Toast.makeText(Login.this, "Please enter all required fields", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Credentials Invalid", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
