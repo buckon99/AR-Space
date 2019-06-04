@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                     frameLayout.setVisibility(View.INVISIBLE);
                     return true;
                 case R.id.navigation_search:
-                    mTextMessage.setText("");
+                    mTextMessage.setText(R.string.title_search);
                     frameLayout.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_settings:
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        new Search();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);

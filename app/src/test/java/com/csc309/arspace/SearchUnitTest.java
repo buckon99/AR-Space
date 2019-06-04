@@ -15,8 +15,19 @@ public class SearchUnitTest {
         Search testSearcher = new Search();
         String[] keywords = new String[] {"Magic", "Blender"};
         ArrayList<Product> expected =  new ArrayList<>();
-        expected.add(new Product("0", "Magic Bullet Blender, Silver", "",
-                0, 0, 0, "", 0));
-        assertTrue(expected.get(0).equals(testSearcher.searchProduct(keywords).get(0)));
+        expected.add(new Product("Magic Bullet Blender, Silver", "",
+                "", 0, 0, 0, ""));
+        assertTrue(expected.get(0).equals(testSearcher.searchForAny(keywords).get(0)));
+    }
+
+    @Test
+    public void searchAny_isCorrect()
+    {
+        Search testSearcher = new Search();
+        String[] keywords = new String[] {"Magic", "Elephant"};
+        ArrayList<Product> expected =  new ArrayList<>();
+        expected.add(new Product("Magic Bullet Blender, Silver", "",
+                "", 0, 0, 0, ""));
+        assertTrue(expected.get(0).equals(testSearcher.searchForAny(keywords).get(0)));
     }
 }
