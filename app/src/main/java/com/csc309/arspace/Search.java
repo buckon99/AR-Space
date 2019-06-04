@@ -51,7 +51,7 @@ public class Search
                 double price = ele.get("price").getAsFloat();
                 String imgURL = ele.getAsJsonArray("imageUrl").get(0).getAsString();
                 String title = ele.get("title").getAsString();
-                String info = ele.get("goodToKnow").getAsString();
+                String type = ele.get("short_description").getAsString();
                 JsonObject measurements = ele.getAsJsonObject("productMeasurements");
                 // todo: parse height, width, and length
                 // parseMeasurements(measurements);
