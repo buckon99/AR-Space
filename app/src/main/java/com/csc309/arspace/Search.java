@@ -66,6 +66,13 @@ public class Search
                 String title = ele.get("title").getAsString();
                 String type = ele.get("short_description").getAsString();
 
+                // parse additional info
+                String info = "";
+                JsonElement infoEle = ele.get("goodToKnow");
+                if(infoEle != null) {
+                    info = ele.get("goodToKnow").getAsString();
+                }
+
                 // extract dimension fields
                 String measurements = ele.getAsJsonPrimitive("productMeasurements").getAsString();
                 ArrayList<Double> dimensions = parseMeasurements(measurements);
