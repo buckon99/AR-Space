@@ -72,8 +72,7 @@ public class Search
         }
         return results;
     }
-
-    // todo: implement
+    
     private static ArrayList<Double> parseMeasurements(String measurements)
     {
         ArrayList<Double> dimensions = new ArrayList<>();
