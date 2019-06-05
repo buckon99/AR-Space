@@ -76,12 +76,12 @@ public class Product {
     }
 
     // adds product to user's database collection of products
-    public void addProduct() {
+    public void addProduct(String userSavedProductName) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         String currentUid = currentUser.getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = db.document(currentUid + "/" + this.id);
+        DocumentReference documentReference = db.document(currentUid + "/" + userSavedProductName);
 
         Map<String, Object> product = new HashMap<>();
         product.put("id", this.id);
@@ -91,12 +91,19 @@ public class Product {
         product.put("length", this.length);
         product.put("imgURL", this.imgURL);
 
-        /*db.collection(currentUid)
-                .add(product)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error!", e));*/
-
         documentReference.set(product)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error!", e));
+    }
+
+    public void loadProduct(String userSavedProductName) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        String currentUid = currentUser.getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference documentReference = db.document(currentUid + "/" + userSavedProductName);
+
+        documentReference.get()
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error!", e));
     }
