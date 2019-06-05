@@ -1,6 +1,9 @@
 package com.csc309.arspace;
 
+import com.csc309.arspace.models.Product;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
 
@@ -18,6 +21,16 @@ public class SearchUnitTest {
         Search.searchProduct(keywords);
         keywords = new String[] {"blender"};
         Search.searchProduct(keywords);
+        keywords = new String[] {"table"};
+        Search.searchProduct(keywords);
+        keywords = new String[] {"bedframe"};
+        Search.searchProduct(keywords);
+        keywords = new String[] {"nightstand"};
+        Search.searchProduct(keywords);
+        keywords = new String[] {"clock"};
+        Search.searchProduct(keywords);
+        keywords = new String[] {"chair"};
+        Search.searchProduct(keywords);
         assertTrue(true);
     }
 
@@ -34,6 +47,40 @@ public class SearchUnitTest {
         Search.searchProduct(keywords);
         keywords = new String[] {"large", "carpet"};
         Search.searchProduct(keywords);
+        keywords = new String[] {"coffee", "table"};
+        Search.searchProduct(keywords);
         assertTrue(true);
+    }
+
+    @Test
+    public void searchInvalid1()
+    {
+        String[] keywords = new String[] {"flottebo",  "book"};
+        ArrayList<Product> actual = Search.searchProduct(keywords);
+        assertTrue(actual != null && actual.isEmpty());
+    }
+
+    @Test
+    public void searchInvalid2()
+    {
+        String[] keywords = new String[] {"digital"};
+        ArrayList<Product> actual = Search.searchProduct(keywords);
+        assertTrue(actual != null && actual.isEmpty());
+    }
+
+    @Test
+    public void searchEmpty()
+    {
+        String[] keywords = new String[] {"asdnoajdoiajdojw"};
+        ArrayList<Product> actual = Search.searchProduct(keywords);
+        assertTrue(actual != null && actual.isEmpty());
+    }
+
+    @Test
+    public void searchEmptyMultiple()
+    {
+        String[] keywords = new String[] {"asdnoajdoiajdojw", "wowowowowow"};
+        ArrayList<Product> actual = Search.searchProduct(keywords);
+        assertTrue(actual != null && actual.isEmpty());
     }
 }
