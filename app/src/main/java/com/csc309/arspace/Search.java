@@ -1,10 +1,6 @@
 package com.csc309.arspace;
 import com.csc309.arspace.models.Product;
 import com.google.gson.*;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONArray;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,10 +13,12 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class Search
 {
+    // search for list of products based on list of keywords
     public static ArrayList<Product> searchProduct(String[] keywords)
     {
         ArrayList<Product> results = new ArrayList<>();
 
+        // check empty keywords list
         if(keywords.length == 0)
         {
             return null;
@@ -30,16 +28,24 @@ public class Search
         String baseURL = "https://search.unbxd.io/ac97f4afb1f7404167b9611f771ea548/prod-ikea-com800881532940772/search?&q=";
         String urlTail = "&rows=40&view=grid&start=0&format=json&variants=true&variants.count=10&variants.fields=v_imageUrl%2Cv_isNewLowerPrice%2Cv_goodToKnow%2Cv_parent_unbxd%2Cv_productMeasurements%2Cv_normalPrice%2Cv_externalImageNormal%2Cv_title%2Cv_brand%2Cv_short_description%2Cv_uniqueId%2Cv_productUrl%2Cv_sku%2Cv_price%2Cv_isNew%2Cv_averageRating%2Cv_ratingCount%2Cv_isBreathtakingItem%2Cv_isBuyable&stats=price&fields=imageUrl,isNewLowerPrice,goodToKnow,parent_unbxd,productMeasurements,normalPrice,externalImageNormal,title,brand,short_description,uniqueId,productUrl,sku,price,isNew,averageRating,ratingCount,isBreathtakingItem,isBuyable&facet.multiselect=true&indent=off&device-type=Mobile&unbxd-url=https%3A%2F%2Fwww.ikea.com%2Fms%2Fen_US%2Fusearch%2F%3F";
         String searchURL = baseURL + keywords[0];
+        StringBuilder builder = new StringBuilder();
+        builder.append(searchURL);
         for(int i = 1; i < keywords.length; i++)
         {
-            searchURL = searchURL + "%20" + keywords[i];
+            builder.append("%20");
+            builder.append(keywords[i]);
         }
-        searchURL += urlTail;
-        //System.out.println(searchURL);
+        builder.append(urlTail);
+        searchURL = builder.toString();
 
         // load json object from url
         JsonParser parser = new JsonParser();
-        JsonObject obj = parser.parse(getJSON(searchURL)).getAsJsonObject();
+        String jsonStr = getJSON(searchURL);
+        if(jsonStr == null)
+        {
+            return null;
+        }
+        JsonObject obj = parser.parse(jsonStr).getAsJsonObject();
         if(obj == null)
         {
             return null;
@@ -53,14 +59,15 @@ public class Search
 
             if(ele.has("productMeasurements"))
             {
+                // extract basic fields
                 String productURL = ele.get("productUrl").getAsString();
                 double price = ele.get("price").getAsFloat();
                 String imgURL = ele.getAsJsonArray("imageUrl").get(0).getAsString();
                 String title = ele.get("title").getAsString();
                 String type = ele.get("short_description").getAsString();
 
+                // extract dimension fields
                 String measurements = ele.getAsJsonPrimitive("productMeasurements").getAsString();
-                //System.out.println(productURL);
                 ArrayList<Double> dimensions = parseMeasurements(measurements);
                 if(dimensions != null)
                 {
@@ -72,7 +79,8 @@ public class Search
         }
         return results;
     }
-    
+
+    // given a json primitive string, parse the height, length, and width
     private static ArrayList<Double> parseMeasurements(String measurements)
     {
         ArrayList<Double> dimensions = new ArrayList<>();
@@ -88,13 +96,13 @@ public class Search
         double width = 0;
         double height = 0;
         double length = 0;
+
+        // loop through split elements of the string
         for(int i = 0; i < elements.length - 1; i++)
         {
-            //System.out.println("---" + elements[i]);
             String[] subElements;
             if(elements[i].contains("</dEn>"))
             {
-                //System.out.println("split: " + elements[i].split("</dEn>")[1]);
                 elements[i] = elements[i].split("</dEn>")[1];
                 subElements = elements[i].split(" ");
             }
@@ -128,6 +136,7 @@ public class Search
             }
         }
 
+        // use extra dimensions if certain dimensions not found
         int count = 0;
         if(widthFound)
         {
@@ -182,6 +191,7 @@ public class Search
         return dimensions;
     }
 
+    // parse a string for a double
     private static double getDouble(String[] subElements)
     {
         int offset = 0;
@@ -201,6 +211,7 @@ public class Search
         }
     }
 
+    // get JSON string from url string
     private static String getJSON(String url) {
         HttpsURLConnection con = null;
         try {
@@ -213,7 +224,8 @@ public class Search
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
+                sb.append(line);
+                sb.append( "\n");
             }
             br.close();
             return sb.toString();
