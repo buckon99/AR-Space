@@ -23,10 +23,12 @@ public class Product {
     private double length;
     private String id;
     private String imgURL;
+    private double price;
+    private String info;
 
     public Product(String id, String title, String type,
                    double width, double height, double length,
-                   String imgURL)
+                   String imgURL, double price, String info)
     {
         this.id = id;
         this.title = title;
@@ -35,6 +37,8 @@ public class Product {
         this.height = height;
         this.length = length;
         this.imgURL = imgURL;
+        this.price = price;
+        this.info = info;
     }
 
     public String getId() {
@@ -64,6 +68,50 @@ public class Product {
 
     public String getType() {
         return type;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setImgURL(String imgURL) {
+        this.imgURL = imgURL;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
     }
 
     public boolean equals(Product other) {
