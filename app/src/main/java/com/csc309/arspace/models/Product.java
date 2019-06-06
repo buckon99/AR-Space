@@ -3,12 +3,16 @@ package com.csc309.arspace.models;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -153,21 +157,32 @@ public class Product {
         product.put("height", this.height);
         product.put("length", this.length);
         product.put("imgURL", this.imgURL);
+        product.put("price", this.price);
+        product.put("info", this.info);
 
         documentReference.set(product)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error!", e));
     }
 
-    public void loadProduct(String userSavedProductName) {
+    public void loadProducts() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        String currentUid = currentUser.getUid();
+        String currentUid = null;
+        if (currentUser != null) {
+            currentUid = currentUser.getUid();
+        }
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = db.document(currentUid + "/" + userSavedProductName);
 
-        documentReference.get()
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error!", e));
+        db.collection(currentUid)
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                        }
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                });
     }
 }
