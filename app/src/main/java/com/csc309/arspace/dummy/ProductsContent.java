@@ -13,26 +13,26 @@ import java.util.Map;
  * <p>
  * TODO: Replace all uses of this class before publishing your app.
  */
-public class DummyContent {
+public class ProductsContent {
 
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<Product> ITEMS = new ArrayList<Product>();
+    public static final List<Product> ITEMS = new ArrayList<>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, Product> ITEM_MAP = new HashMap<String, Product>();
+    public static final Map<String, Product> ITEM_MAP = new HashMap<>();
 
     private static final int COUNT = 25;
 
     static {
-        addItem(new Product("1", "Sample Product (1x1x1)", "example", 0.3048, 0.3048, 0.3048, null));
-        addItem(new Product("2", "Sample Product (1x2x1)", "example", 0.3048, 0.3048 * 2, 0.3048, null));
-        addItem(new Product("3", "Sample Product (1x2x2)", "example", 0.3048, 0.3048 * 2, 0.3048 * 2, null));
+        //addItem(new Product("1", "Sample Product (1x1x1)", "example", 0.3048, 0.3048, 0.3048, null, 0, ""));
+        //addItem(new Product("2", "Sample Product (1x2x1)", "example", 0.3048, 0.3048 * 2, 0.3048, null, 0, ""));
+        //addItem(new Product("3", "Sample Product (1x2x2)", "example", 0.3048, 0.3048 * 2, 0.3048 * 2, null, 0, ""));
     }
-    private static void addItem(Product item) {
+    public static void addItem(Product item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.getTitle(), item);
     }

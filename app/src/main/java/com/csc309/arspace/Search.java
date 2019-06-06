@@ -1,97 +1,256 @@
 package com.csc309.arspace;
-
 import com.csc309.arspace.models.Product;
+import com.google.gson.*;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import javax.net.ssl.HttpsURLConnection;
 
 public class Search
 {
-    private ArrayList<Product> sampleDatabase;
-    public Search()
+    // search for list of products based on list of keywords
+    public static ArrayList<Product> searchProduct(String[] keywords)
     {
-        String[] titles =
-            {
-                    "Magic Bullet Blender, Silver",
-                    "Ninja Professional 72oz Countertop Blender with 1000-Watt Base",
-                    "Breville BBL620 Fresh & Furious Blender, Silver",
-                    "Audio-Technica ATH-M40x Professional Studio"
-            };
+        ArrayList<Product> results = new ArrayList<>();
 
-        String[] types =
-                {
-                        "Motors",
-                        "Fashion",
-                        "Collectibles & Art",
-                        "Home & Garden",
-                        "Sporting Goods",
-                        "Toys",
-                        "Business & Industrial",
-                        "Music"
-                };
-        Random random = new Random();
-
-        sampleDatabase = new ArrayList<>();
-        for(String title : titles)
+        // check empty keywords list
+        if(keywords.length == 0)
         {
-            sampleDatabase.add(new Product("0", title,
-                    types[random.nextInt(types.length)],
-                    random.nextDouble() * 20.0,
-                    random.nextDouble() * 20.0,
-                    random.nextDouble() * 20.0, ""));
+            return null;
+        }
+
+        // construct search url
+        String baseURL = "https://search.unbxd.io/ac97f4afb1f7404167b9611f771ea548/prod-ikea-com800881532940772/search?&q=";
+        String urlTail = "&rows=40&view=grid&start=0&format=json&variants=true&variants.count=10&variants.fields=v_imageUrl%2Cv_isNewLowerPrice%2Cv_goodToKnow%2Cv_parent_unbxd%2Cv_productMeasurements%2Cv_normalPrice%2Cv_externalImageNormal%2Cv_title%2Cv_brand%2Cv_short_description%2Cv_uniqueId%2Cv_productUrl%2Cv_sku%2Cv_price%2Cv_isNew%2Cv_averageRating%2Cv_ratingCount%2Cv_isBreathtakingItem%2Cv_isBuyable&stats=price&fields=imageUrl,isNewLowerPrice,goodToKnow,parent_unbxd,productMeasurements,normalPrice,externalImageNormal,title,brand,short_description,uniqueId,productUrl,sku,price,isNew,averageRating,ratingCount,isBreathtakingItem,isBuyable&facet.multiselect=true&indent=off&device-type=Mobile&unbxd-url=https%3A%2F%2Fwww.ikea.com%2Fms%2Fen_US%2Fusearch%2F%3F";
+        String searchURL = baseURL + keywords[0];
+        StringBuilder builder = new StringBuilder();
+        builder.append(searchURL);
+        for(int i = 1; i < keywords.length; i++)
+        {
+            builder.append("%20");
+            builder.append(keywords[i]);
+        }
+        builder.append(urlTail);
+        searchURL = builder.toString();
+
+        // load json object from url
+        JsonParser parser = new JsonParser();
+        String jsonStr = getJSON(searchURL);
+        if(jsonStr == null)
+        {
+            return null;
+        }
+        JsonObject obj = parser.parse(jsonStr).getAsJsonObject();
+        if(obj == null)
+        {
+            return null;
+        }
+
+        // extract info from json object
+        JsonArray productsJArray = obj.getAsJsonObject("response").getAsJsonArray("products");
+        for(int i = 0; i < productsJArray.size(); i++)
+        {
+            JsonObject ele = productsJArray.get(i).getAsJsonObject();
+
+            if(ele.has("productMeasurements"))
+            {
+                // extract basic fields
+                String productURL = ele.get("productUrl").getAsString();
+                double price = ele.get("price").getAsFloat();
+                String imgURL = ele.getAsJsonArray("imageUrl").get(0).getAsString();
+                String title = ele.get("title").getAsString();
+                String type = ele.get("short_description").getAsString();
+
+                // parse additional info
+                String info = "";
+                JsonElement infoEle = ele.get("goodToKnow");
+                if(infoEle != null) {
+                    info = ele.get("goodToKnow").getAsString();
+                }
+
+                // extract dimension fields
+                String measurements = ele.getAsJsonPrimitive("productMeasurements").getAsString();
+                ArrayList<Double> dimensions = parseMeasurements(measurements);
+                if(dimensions != null)
+                {
+                    results.add(new Product("0", title, type, dimensions.get(0),
+                            dimensions.get(1), dimensions.get(2), imgURL, price, info));
+                }
+            }
+
+        }
+        return results;
+    }
+
+    // given a json primitive string, parse the height, length, and width
+    private static ArrayList<Double> parseMeasurements(String measurements)
+    {
+        ArrayList<Double> dimensions = new ArrayList<>();
+        ArrayList<Double> extra = new ArrayList<>();
+        String[] elements = measurements.split("\"");
+        if(elements.length < 3)
+        {
+            return null;
+        }
+        boolean lengthFound = false;
+        boolean widthFound = false;
+        boolean heightFound = false;
+        double width = 0;
+        double height = 0;
+        double length = 0;
+
+        // loop through split elements of the string
+        for(int i = 0; i < elements.length - 1; i++)
+        {
+            String[] subElements;
+            if(elements[i].contains("</dEn>"))
+            {
+                elements[i] = elements[i].split("</dEn>")[1];
+                subElements = elements[i].split(" ");
+            }
+            else
+            {
+                subElements = elements[i].split(" ");
+            }
+
+            if(elements[i].contains("Depth") || elements[i].contains("depth"))
+            {
+                extra.add(getDouble(subElements));
+            }
+            else if(elements[i].contains("Thickness") || elements[i].contains("thickness"))
+            {
+                extra.add(getDouble(subElements));
+            }
+            else if(elements[i].contains("Height") || elements[i].contains("height"))
+            {
+                heightFound = true;
+                height = getDouble(subElements);
+            }
+            else if(elements[i].contains("Width") || elements[i].contains("width"))
+            {
+                widthFound = true;
+                width = getDouble(subElements);
+            }
+            else if(elements[i].contains("Length") || elements[i].contains("length"))
+            {
+                lengthFound = true;
+                length = getDouble(subElements);
+            }
+        }
+
+        // use extra dimensions if certain dimensions not found
+        int count = 0;
+        if(widthFound)
+        {
+            dimensions.add(width);
+        }
+        else
+        {
+            if(count < extra.size())
+            {
+                dimensions.add(extra.get(count++));
+            }
+            else
+            {
+                return null;
+            }
+        }
+        if(heightFound)
+        {
+            dimensions.add(height);
+        }
+
+        else
+        {
+            if(count < extra.size())
+            {
+                dimensions.add(extra.get(count++));
+            }
+            else
+            {
+                return null;
+            }
+        }
+        if(lengthFound) {
+            dimensions.add(length);
+        }
+        else
+        {
+            if(count < extra.size())
+            {
+                dimensions.add(extra.get(count));
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        if(dimensions.contains(0.0))
+        {
+            return null;
+        }
+        return dimensions;
+    }
+
+    // parse a string for a double
+    private static double getDouble(String[] subElements)
+    {
+        int offset = 0;
+        double decimal = 0;
+        if(subElements[subElements.length - 1].contains("/"))
+        {
+            offset = 1;
+            String[] mixedFraction = subElements[subElements.length - 1].split("/");
+            decimal = Double.parseDouble(mixedFraction[0]) / Double.parseDouble(mixedFraction[1]);
+        }
+        try {
+            return Double.parseDouble(subElements[subElements.length - 1 - offset]) + decimal;
+        }
+        catch(java.lang.NumberFormatException e)
+        {
+            return 0.0;
         }
     }
 
-    public Product getProduct(int i)
-    {
-        if(i < sampleDatabase.size())
-        {return sampleDatabase.get(i);}
+    // get JSON string from url string
+    private static String getJSON(String url) {
+        HttpsURLConnection con = null;
+        try {
+            URL u = new URL(url);
+            con = (HttpsURLConnection) u.openConnection();
+
+            con.connect();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+                sb.append( "\n");
+            }
+            br.close();
+            return sb.toString();
+
+
+        } catch (MalformedURLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (con != null) {
+                try {
+                    con.disconnect();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
         return null;
-    }
-    public void addProduct(Product p)
-    {
-        sampleDatabase.add(p);
-    }
-    public ArrayList<Product> searchForAny(String[] keywords)
-    {
-        ArrayList<Product> results = new ArrayList<>();
-        for(Product p : sampleDatabase)
-        {
-            boolean toAdd = false;
-            for(String keyword : keywords)
-            {
-                if((p.getType() + p.getTitle()).contains(keyword))
-                {
-                    toAdd = true;
-                    break;
-                }
-            }
-            if(toAdd)
-            {
-                results.add(p);
-            }
-        }
-        return results;
-    }
-
-    public ArrayList<Product> searchForAll(String[] keywords)
-    {
-        ArrayList<Product> results = new ArrayList<>();
-        for(Product p : sampleDatabase)
-        {
-            boolean toAdd = true;
-            for(String keyword : keywords)
-            {
-                if(!(p.getType() + p.getTitle()).contains(keyword))
-                {
-                    toAdd = false;
-                    break;
-                }
-            }
-            if(toAdd)
-            {
-                results.add(p);
-            }
-        }
-        return results;
     }
 }

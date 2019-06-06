@@ -33,12 +33,16 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.9'
     implementation 'com.google.firebase:firebase-database:17.0.0'
     implementation 'com.google.firebase:firebase-auth:17.0.0'
+    implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
     implementation 'com.google.android.gms:play-services-gcm:16.1.0'
+    implementation 'com.google.firebase:firebase-firestore:19.0.2'
     testImplementation 'junit:junit:4.13-beta-2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     // Provides ArFragment, and other Sceneform UX resources:
     implementation "com.google.ar.sceneform.ux:sceneform-ux:1.8.0"
+    // jsoup HTML parser library @ https://jsoup.org/
+    implementation "org.jsoup:jsoup:1.12.1"
 
 }
 

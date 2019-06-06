@@ -13,7 +13,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="email">Email</string>
     <string name="logo">Logo</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">AR Space</string>
     <string name="title_product_list">Products</string>
     <string name="title_product_detail">Product Detail</string>
     <string name="search_hint">Search Products</string>
