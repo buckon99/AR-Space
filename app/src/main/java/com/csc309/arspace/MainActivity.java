@@ -15,14 +15,17 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.FrameLayout;
-import com.csc309.arspace.dummy.DummyContent;
+import com.csc309.arspace.dummy.ProductsContent;
 import com.csc309.arspace.models.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private MainActivity parent;
     private TextView mTextMessage;
     private FrameLayout frameLayout;
+    private SimpleItemRecyclerViewAdapter adapter;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -30,16 +33,13 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
                     frameLayout.setVisibility(View.INVISIBLE);
                     return true;
                 case R.id.navigation_search:
-                    mTextMessage.setText(R.string.title_search);
                     frameLayout.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_settings:
                     frameLayout.setVisibility(View.INVISIBLE);
-                    mTextMessage.setText(R.string.title_settings);
                     return true;
             }
             return false;
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         mTextMessage = findViewById(R.id.message);
+        parent = this;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,25 +79,47 @@ public class MainActivity extends AppCompatActivity {
             mTwoPane = true;
         }
         EditText search = findViewById(R.id.search);
+        RecyclerView recyclerView = findViewById(R.id.product_list);
         search.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    //TODO: search goes here
+                    Thread thread = new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try  {
+                                String[] values = search.getText().toString().split(" ");
+                                ArrayList<Product> products = Search.searchProduct(values);
+                                for(int i = 0; i < products.size(); i++)
+                                    ProductsContent.addItem(products.get(i));
+                                adapter.notifyDataSetChanged();
+                                //recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(parent, products, mTwoPane));
+                                //recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(parent, products, mTwoPane));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    thread.start();
+
                     return true;
                 }
                 return false;
             }
         });
         frameLayout = findViewById(R.id.frameLayout);
-        View recyclerView = findViewById(R.id.product_list);
+
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView(recyclerView);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane));
+        adapter = new MainActivity.SimpleItemRecyclerViewAdapter(this, ProductsContent.ITEMS, mTwoPane);
+        recyclerView.setAdapter(adapter);
     }
 
     public static class SimpleItemRecyclerViewAdapter
