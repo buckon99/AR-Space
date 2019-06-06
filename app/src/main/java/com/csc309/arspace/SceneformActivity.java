@@ -82,6 +82,15 @@ public class  SceneformActivity extends AppCompatActivity {
 
                     try {
                         ControlRenderable = ControlStage.get();
+                        Node base = new Node();
+                        base.setRenderable(ControlRenderable);
+                        View buttonControlView = ControlRenderable.getView();
+                        Button controlButton = buttonControlView.findViewById(R.id.item_button);
+                        controlButton.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                // Code here executes on main thread after user presses button
+                            }
+                        });
                     }
                     catch (InterruptedException | ExecutionException ex) {
                         Utility.displayError(this, "Unable to load renderable", ex);
@@ -96,16 +105,6 @@ public class  SceneformActivity extends AppCompatActivity {
                             cubeRenderable = ShapeFactory.makeCube(new Vector3(width, height, length), new Vector3(0, height/2, 0), material);
                         });
 
-        Node base = new Node();
-        base.setRenderable(ControlRenderable);
-        View buttonControlView = ControlRenderable.getView();
-        Button controlButton = buttonControlView.findViewById(R.id.item_button);
-
-        controlButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Code here executes on main thread after user presses button
-            }
-        });
 
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
