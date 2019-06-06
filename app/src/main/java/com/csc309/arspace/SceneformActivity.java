@@ -59,14 +59,14 @@ public class SceneformActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_ux);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
-        float width = (float)getIntent().getDoubleExtra("width", 0);
-        float height = (float)getIntent().getDoubleExtra("height", 0);
-        float length = (float)getIntent().getDoubleExtra("length", 0);
+        float width = (float)getIntent().getDoubleExtra("width", 0) * 0.0254f;
+        float height = (float)getIntent().getDoubleExtra("height", 0) * 0.0254f;
+        float length = (float)getIntent().getDoubleExtra("length", 0) * 0.0254f;
 
         MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.RED))
                 .thenAccept(
                         material -> {
-                            cubeRenderable = ShapeFactory.makeCube(new Vector3(width, height, length), Vector3.zero(), material);
+                            cubeRenderable = ShapeFactory.makeCube(new Vector3(width, height, length), new Vector3(0, height/2, 0), material);
                         });
 
 

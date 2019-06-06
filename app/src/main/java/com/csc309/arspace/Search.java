@@ -79,7 +79,7 @@ public class Search
                 if(dimensions != null)
                 {
                     results.add(new Product("0", title, type, dimensions.get(0),
-                            dimensions.get(1), dimensions.get(2), imgURL, price, info));
+                            dimensions.get(1), dimensions.get(2), imgURL, price, info, productURL));
                 }
             }
 

@@ -1,19 +1,18 @@
 package com.csc309.arspace;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
@@ -157,29 +156,91 @@ public class MainActivity extends AppCompatActivity {
                 Context context = view.getContext();
                 Product item = (Product) view.getTag();
 
-                Intent intent = new Intent(context, SceneformActivity.class);
-                intent.putExtra("width", item.getWidth());
-                intent.putExtra("height", item.getHeight());
-                intent.putExtra("length", item.getLength());
+                LayoutInflater inflater = (LayoutInflater)
+                        context.getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout.popup_window, null);
 
-                context.startActivity(intent);
+                // create the popup window
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                boolean focusable = true; // lets taps outside the popup also dismiss it
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-                /*
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putString(ProductDetailFragment.ARG_ITEM_ID, item.id);
-                    ProductDetailFragment fragment = new ProductDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.product_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, ProductDetailActivity.class);
-                    intent.putExtra(ProductDetailFragment.ARG_ITEM_ID, item.id);
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window tolken
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+                Button viewProduct = popupView.findViewById(R.id.view);
+                viewProduct.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view){
+                        String url = item.getProductUrl();
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        context.startActivity(i);
+                    }
+                });
 
-                    context.startActivity(intent);
-                }*/
+                Button arView = popupView.findViewById(R.id.arView);
+                arView.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view){
+                        Intent intent = new Intent(context, SceneformActivity.class);
+                        intent.putExtra("width", item.getWidth());
+                        intent.putExtra("height", item.getHeight());
+                        intent.putExtra("length", item.getLength());
+
+                        context.startActivity(intent);
+                    }
+                });
+                Button save = popupView.findViewById(R.id.save);
+                save.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view){
+
+                        item.addProduct(item.getProductUrl());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Item Saved")
+                                .setTitle("Item Saved");
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                popupWindow.dismiss();
+                            }
+                        });
+                    }
+                });
+
+                Button share = popupView.findViewById(R.id.share);
+
+                share.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Action not supported at this time")
+                                .setTitle("Error");
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                popupWindow.dismiss();
+                            }
+                        });
+                    }
+                });
+
+                // dismiss the popup window when touched
+                popupView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        popupWindow.dismiss();
+                        return true;
+                    }
+                });
             }
         };
 

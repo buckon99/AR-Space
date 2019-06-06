@@ -27,11 +27,11 @@ public class Product {
     private String imgURL;
     private double price;
     private String info;
+    private String productUrl;
 
     public Product(String id, String title, String type,
                    double width, double height, double length,
-                   String imgURL, double price, String info)
-    {
+                   String imgURL, double price, String info, String productUrl) {
         this.id = id;
         this.title = title;
         this.type = type;
@@ -41,6 +41,11 @@ public class Product {
         this.imgURL = imgURL;
         this.price = price;
         this.info = info;
+        this.productUrl = productUrl;
+    }
+
+    public String getProductUrl() {
+        return this.productUrl;
     }
 
     public void addBitmap(Bitmap img) {
