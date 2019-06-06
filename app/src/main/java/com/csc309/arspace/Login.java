@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
@@ -60,13 +59,5 @@ public class Login extends AppCompatActivity {
                         }
                     });
         }
-
-        /*
-        // for now, hardcode validation process
-        if (email.equals("arspace") && pw.equals("12345")) {
-            Intent goToMainScreen = new Intent(Login.this, MainActivity.class);
-            startActivity(goToMainScreen);
-        }*/
     }
-
 }

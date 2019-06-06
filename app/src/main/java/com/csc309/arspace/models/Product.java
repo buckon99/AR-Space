@@ -1,21 +1,17 @@
 package com.csc309.arspace.models;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.support.constraint.motion.MotionScene.TAG;
 
@@ -146,6 +142,7 @@ public class Product {
     public void addProduct(String userSavedProductName) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        assert currentUser != null;
         String currentUid = currentUser.getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference documentReference = db.document(currentUid + "/" + userSavedProductName);
@@ -153,12 +150,14 @@ public class Product {
         Map<String, Object> product = new HashMap<>();
         product.put("id", this.id);
         product.put("title", this.title);
+        product.put("type", this.type);
         product.put("width", this.width);
         product.put("height", this.height);
         product.put("length", this.length);
         product.put("imgURL", this.imgURL);
         product.put("price", this.price);
         product.put("info", this.info);
+        product.put("productURL", this.productUrl);
 
         documentReference.set(product)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
@@ -166,6 +165,7 @@ public class Product {
     }
 
     public void loadProducts() {
+        ArrayList<Product> products = new ArrayList<>();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         String currentUid = null;
@@ -174,11 +174,24 @@ public class Product {
         }
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        assert currentUid != null;
         db.collection(currentUid)
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            Map<String, Object> prodFields = document.getData();
                             Log.d(TAG, document.getId() + " => " + document.getData());
+                            Product product = new Product(Objects.requireNonNull(prodFields.get("id")).toString(),
+                                    Objects.requireNonNull(prodFields.get("title")).toString(),
+                                    Objects.requireNonNull(prodFields.get("type")).toString(),
+                                    (Double)prodFields.get("width"),
+                                    (Double)prodFields.get("height"),
+                                    (Double)prodFields.get("length"),
+                                    Objects.requireNonNull(prodFields.get("imgURL")).toString(),
+                                    (Double)prodFields.get("price"),
+                                    Objects.requireNonNull(prodFields.get("info")).toString(),
+                                    Objects.requireNonNull(prodFields.get("productURL")).toString());
+                            products.add(product);
                         }
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
