@@ -2,6 +2,8 @@ package com.csc309.arspace;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -12,19 +14,21 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.FrameLayout;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
 import com.csc309.arspace.dummy.ProductsContent;
 import com.csc309.arspace.models.Product;
 
+import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private MainActivity parent;
     private TextView mTextMessage;
-    private FrameLayout frameLayout;
+    private RelativeLayout relLayout;
     private SimpleItemRecyclerViewAdapter adapter;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -33,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    frameLayout.setVisibility(View.INVISIBLE);
+                    relLayout.setVisibility(View.INVISIBLE);
                     return true;
                 case R.id.navigation_search:
-                    frameLayout.setVisibility(View.VISIBLE);
+                    relLayout.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_settings:
-                    frameLayout.setVisibility(View.INVISIBLE);
+                    relLayout.setVisibility(View.INVISIBLE);
                     return true;
             }
             return false;
@@ -80,11 +84,11 @@ public class MainActivity extends AppCompatActivity {
         }
         EditText search = findViewById(R.id.search);
         RecyclerView recyclerView = findViewById(R.id.product_list);
-        search.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     Thread thread = new Thread(new Runnable() {
 
                         @Override
@@ -92,8 +96,15 @@ public class MainActivity extends AppCompatActivity {
                             try  {
                                 String[] values = search.getText().toString().split(" ");
                                 ArrayList<Product> products = Search.searchProduct(values);
-                                for(int i = 0; i < products.size(); i++)
-                                    ProductsContent.addItem(products.get(i));
+                                for(int i = 0; i < products.size(); i++) {
+
+                                    Product prod = products.get(i);
+                                    URL url = new URL(prod.getImgURL());
+                                    Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                                    prod.addBitmap(bmp);
+                                    ProductsContent.addItem(prod);
+                                }
+
                                 adapter.notifyDataSetChanged();
                                 //recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(parent, products, mTwoPane));
                                 //recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(parent, products, mTwoPane));
@@ -103,15 +114,26 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     });
-
+                    InputMethodManager imm = (InputMethodManager) parent.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(search.getWindowToken(), 0);
                     thread.start();
+                    return true;
+                }
+                return false;
+            }
+        });
+        search.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
 
                     return true;
                 }
                 return false;
             }
         });
-        frameLayout = findViewById(R.id.frameLayout);
+        relLayout = findViewById(R.id.frameLayout);
 
         assert recyclerView != null;
         setupRecyclerView(recyclerView);
@@ -178,9 +200,18 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final MainActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).getTitle());
-            holder.mContentView.setText(mValues.get(position).getTitle());
 
+            Product prod = mValues.get(position);
+            holder.mIdView.setText(prod.getTitle());
+            holder.mContentView.setText(prod.getType());
+            holder.mImgView.setImageBitmap(prod.getBitmap());
+            DecimalFormat df = new DecimalFormat("0");
+            holder.dimensions.setText("Dimensions: " + df.format(prod.getLength()) + "\" x "
+                    + df.format(prod.getWidth()) + "\" x "
+                    + df.format(prod.getHeight()) + "\"");
+
+            df = new DecimalFormat("0.##");
+            holder.price.setText("$" + df.format(prod.getPrice()));
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
@@ -193,11 +224,16 @@ public class MainActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
-
+            final ImageView mImgView;
+            final TextView dimensions;
+            final TextView price;
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
                 mContentView = (TextView) view.findViewById(R.id.content);
+                mImgView = (ImageView) view.findViewById(R.id.prodImg);
+                dimensions = (TextView) view.findViewById(R.id.dimensions);
+                price = (TextView) view.findViewById(R.id.price);
             }
         }
     }

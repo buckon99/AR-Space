@@ -1,5 +1,6 @@
 package com.csc309.arspace.models;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -16,6 +17,7 @@ import static android.support.constraint.motion.MotionScene.TAG;
 
 public class Product {
 
+    private Bitmap img;
     private String title;
     private String type;
     private double width;
@@ -39,6 +41,14 @@ public class Product {
         this.imgURL = imgURL;
         this.price = price;
         this.info = info;
+    }
+
+    public void addBitmap(Bitmap img) {
+        this.img = img;
+    }
+
+    public Bitmap getBitmap() {
+        return img;
     }
 
     public String getId() {
