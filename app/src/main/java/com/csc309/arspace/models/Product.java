@@ -130,12 +130,11 @@ public class Product {
     }
 
     public boolean equals(Product other) {
-        return this.title.equals(other.title);
-                /*&& this.type.equals(other.type)
+        return this.title.equals(other.title)
+                && this.type.equals(other.type)
                 && this.height == other.height
                 && this.width == other.width
-                && this.length == other.length
-                && this.imgURL.equals(other.imgURL);*/
+                && this.length == other.length;
     }
 
     // adds product to user's database collection of products
