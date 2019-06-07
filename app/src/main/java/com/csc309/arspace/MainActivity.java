@@ -17,7 +17,6 @@ import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import com.csc309.arspace.dummy.ProductsContent;
 import com.csc309.arspace.models.Product;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,107 +36,90 @@ import static android.support.constraint.motion.MotionScene.TAG;
 
 public class MainActivity extends AppCompatActivity {
     private MainActivity parent;
-    private TextView mTextMessage;
     private RelativeLayout relLayout;
     private SimpleItemRecyclerViewAdapter adapter;
-    private static int SAVE = 0;
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            EditText search = findViewById(R.id.search);
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    SAVE = 1;
-                    search.setVisibility(View.INVISIBLE);
-                    ProductsContent.removeAll();
-                    adapter.notifyDataSetChanged();
-                    Thread thread = new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                            String currentUid = null;
-                            if (currentUser != null) {
-                                currentUid = currentUser.getUid();
-                            }
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                            assert currentUid != null;
-                            db.collection(currentUid)
-                                    .get().addOnCompleteListener(task -> {
-                                try {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                            Map<String, Object> prodFields = document.getData();
-                                            Log.d(TAG, document.getId() + " => " + document.getData());
-                                            Product product = new Product(Objects.requireNonNull(prodFields.get("id")).toString(),
-                                                    Objects.requireNonNull(prodFields.get("title")).toString(),
-                                                    Objects.requireNonNull(prodFields.get("type")).toString(),
-                                                    (Double) prodFields.get("width"),
-                                                    (Double) prodFields.get("height"),
-                                                    (Double) prodFields.get("length"),
-                                                    Objects.requireNonNull(prodFields.get("imgURL")).toString(),
-                                                    (Double) prodFields.get("price"),
-                                                    Objects.requireNonNull(prodFields.get("info")).toString(),
-                                                    Objects.requireNonNull(prodFields.get("productURL")).toString());
-                                            Thread thread = new Thread(new Runnable() {
-
-                                                @Override
-                                                public void run() {
-                                                    URL url;
-                                                    try {
-                                                        url = new URL(product.getImgURL());
-                                                        Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                                                        product.addBitmap(bmp);
-                                                        ProductsContent.addItem(product);
-                                                    }catch(MalformedURLException ex){
-                                                        Log.d(TAG, "Malformed URL ", task.getException());
-                                                    }catch (IOException e) {
-                                                        Log.d(TAG, "IO Exception ", task.getException());
-
-                                                    }
-
-                                                    runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            adapter.notifyDataSetChanged();
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                            thread.start();
-
-                                        }
-                                    } else {
-                                        Log.d(TAG, "Error getting documents: ", task.getException());
-                                    }
-                                } catch (Exception e) {
-                                    System.out.println(e);
-                                    Log.d(TAG, "Error getting documents: ", task.getException());
-                                }
-                            });
+    private static int save = 0;
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = (@NonNull MenuItem item) -> {
+        EditText search = findViewById(R.id.search);
+        switch (item.getItemId()) {
+            case R.id.navigation_home:
+                save = 1;
+                search.setVisibility(View.INVISIBLE);
+                ProductsContent.removeAll();
+                adapter.notifyDataSetChanged();
+                Thread thread = new Thread(() -> {
+                        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                        String currentUid = null;
+                        if (currentUser != null) {
+                            currentUid = currentUser.getUid();
                         }
-                    });
-                    thread.start();
-                    relLayout.setVisibility(View.VISIBLE);
-                    return true;
-                case R.id.navigation_search:
-                    SAVE = 0;
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                    ProductsContent.removeAll();
-                    adapter.notifyDataSetChanged();
-                    relLayout.setVisibility(View.VISIBLE);
-                    search.setVisibility(View.VISIBLE);
-                    return true;
-                case R.id.navigation_settings:
-                    relLayout.setVisibility(View.INVISIBLE);
-                    search.setVisibility(View.VISIBLE);
-                    return true;
-            }
-            return false;
+                        assert currentUid != null;
+                        db.collection(currentUid)
+                                .get().addOnCompleteListener(task -> {
+                            try {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                        Map<String, Object> prodFields = document.getData();
+                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                        Product product = new Product(Objects.requireNonNull(prodFields.get("id")).toString(),
+                                                Objects.requireNonNull(prodFields.get("title")).toString(),
+                                                Objects.requireNonNull(prodFields.get("type")).toString(),
+                                                (Double) prodFields.get("width"),
+                                                (Double) prodFields.get("height"),
+                                                (Double) prodFields.get("length"),
+                                                Objects.requireNonNull(prodFields.get("imgURL")).toString(),
+                                                (Double) prodFields.get("price"),
+                                                Objects.requireNonNull(prodFields.get("info")).toString(),
+                                                Objects.requireNonNull(prodFields.get("productURL")).toString());
+                                        Thread t = new Thread(() -> {
+                                                URL url;
+                                                try {
+                                                    url = new URL(product.getImgURL());
+                                                    Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                                                    product.addBitmap(bmp);
+                                                    ProductsContent.addItem(product);
+                                                }catch(MalformedURLException ex){
+                                                    Log.d(TAG, "Malformed URL ", task.getException());
+                                                }catch (IOException e) {
+                                                    Log.d(TAG, "IO Exception ", task.getException());
+
+                                                }
+
+                                                runOnUiThread(() -> {
+                                                        adapter.notifyDataSetChanged();
+                                                });
+                                            });
+                                        t.start();
+
+                                    }
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", e);
+                                }
+                            } catch (Exception e) {
+                                Log.d(TAG, "Error getting documents: ", e);
+                            }
+                        });
+                    });
+                thread.start();
+                relLayout.setVisibility(View.VISIBLE);
+                return true;
+            case R.id.navigation_search:
+                save = 0;
+
+                ProductsContent.removeAll();
+                adapter.notifyDataSetChanged();
+                relLayout.setVisibility(View.VISIBLE);
+                search.setVisibility(View.VISIBLE);
+                return true;
+            case R.id.navigation_settings:
+                relLayout.setVisibility(View.INVISIBLE);
+                search.setVisibility(View.VISIBLE);
+                return true;
+            default:
+                return false;
         }
     };
 
@@ -145,26 +127,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        new Search();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        mTextMessage = findViewById(R.id.message);
         parent = this;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-        //toolbar.setTitle(getTitle());
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
 
         if (findViewById(R.id.product_detail_container) != null) {
             // The detail container view will be present only in the
@@ -175,15 +142,9 @@ public class MainActivity extends AppCompatActivity {
         }
         EditText search = findViewById(R.id.search);
         RecyclerView recyclerView = findViewById(R.id.product_list);
-        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        search.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    Thread thread = new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
+                    Thread thread = new Thread(() ->{
                             try  {
                                 ProductsContent.removeAll();
                                 String[] values = search.getText().toString().split(" ");
@@ -196,20 +157,15 @@ public class MainActivity extends AppCompatActivity {
                                     prod.addBitmap(bmp);
                                     ProductsContent.addItem(prod);
                                 }
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
+                                runOnUiThread(() -> {
                                         adapter.notifyDataSetChanged();
-                                    }
                                 });
 
-                                //recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(parent, products, mTwoPane));
-                                //recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(parent, products, mTwoPane));
-
                             } catch (Exception e) {
-                                e.printStackTrace();
+
+                                Log.d(TAG, "Error getting documents: ", e);
+
                             }
-                        }
                     });
                     InputMethodManager imm = (InputMethodManager) parent.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(search.getWindowToken(), 0);
@@ -217,10 +173,8 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
-            }
-        });
-        search.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
+            });
+        search.setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -228,8 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
-            }
-        });
+            });
         relLayout = findViewById(R.id.frameLayout);
 
         assert recyclerView != null;
@@ -290,57 +243,45 @@ public class MainActivity extends AppCompatActivity {
                         context.startActivity(intent);
                     }
                 });
-                Button save = popupView.findViewById(R.id.save);
-                if(SAVE == 1) {
-                    save.setText("Unsave");
+                Button saveBtn = popupView.findViewById(R.id.save);
+                if(save == 1) {
+                    saveBtn.setText("Unsave");
                 }
-                save.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View view){
+                saveBtn.setOnClickListener((View v) -> {
 
-                        item.addProduct(item.getId());
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Item Saved")
-                                .setTitle("Item Saved");
+                    item.addProduct(item.getId());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Item Saved")
+                            .setTitle("Item Saved");
 
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                popupWindow.dismiss();
-                            }
-                        });
-                    }
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            popupWindow.dismiss();
+                        }
+                    });
                 });
 
                 Button share = popupView.findViewById(R.id.share);
 
-                share.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View view){
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Action not supported at this time")
-                                .setTitle("Error");
+                share.setOnClickListener( (View v) -> {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Action not supported at this time")
+                            .setTitle("Error");
 
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                popupWindow.dismiss();
-                            }
-                        });
-                    }
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    dialog.setOnDismissListener((DialogInterface dialogInterface) -> {
+                            popupWindow.dismiss();
+                    });
                 });
 
                 // dismiss the popup window when touched
-                popupView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        popupWindow.dismiss();
-                        return true;
-                    }
+                popupView.setOnTouchListener((View v, MotionEvent event) -> {
+                    popupWindow.dismiss();
+                    return true;
                 });
             }
         };

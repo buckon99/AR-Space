@@ -129,7 +129,10 @@ public class Product {
         this.width = width;
     }
 
-    public boolean equals(Product other) {
+    public boolean equals(Object o) {
+        if(o.getClass() != Product.class)
+            return false;
+        Product other = (Product)o;
         return this.title.equals(other.title)
                 && this.type.equals(other.type)
                 && this.height == other.height

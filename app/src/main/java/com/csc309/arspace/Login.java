@@ -11,14 +11,15 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
 
-    private EditText email;
-    private EditText password;
 
     private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EditText email;
+        EditText password;
+
         setContentView(R.layout.activity_login);
 
         firebaseAuth = FirebaseAuth.getInstance();

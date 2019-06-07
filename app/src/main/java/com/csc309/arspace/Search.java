@@ -1,4 +1,5 @@
 package com.csc309.arspace;
+import android.util.Log;
 import com.csc309.arspace.models.Product;
 import com.google.gson.*;
 
@@ -10,6 +11,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
+
+import static android.support.constraint.motion.MotionScene.TAG;
 
 public class Search
 {
@@ -239,15 +242,15 @@ public class Search
 
 
         } catch (MalformedURLException ex) {
-            ex.printStackTrace();
+            Log.d(TAG, "Error getting documents: ", ex);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Log.d(TAG, "Error getting documents: ", ex);
         } finally {
             if (con != null) {
                 try {
                     con.disconnect();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.d(TAG, "Error getting documents: ", ex);
                 }
             }
         }

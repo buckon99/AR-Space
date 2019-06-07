@@ -82,7 +82,7 @@ public class  SceneformActivity extends AppCompatActivity {
                             }
                         });
                     }
-                    catch (InterruptedException | ExecutionException ex) {
+                    catch (Exception ex) {
                         Utility.displayError(this, "Unable to load renderable", ex);
                     }
 

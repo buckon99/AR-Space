@@ -1,4 +1,4 @@
-package com.csc309.arspace.dummy;
+package com.csc309.arspace;
 
 import com.csc309.arspace.models.Product;
 
@@ -18,12 +18,12 @@ public class ProductsContent {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<Product> ITEMS = new ArrayList<>();
+    protected static final List<Product> ITEMS = new ArrayList<>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, Product> ITEM_MAP = new HashMap<>();
+    protected static final Map<String, Product> ITEM_MAP = new HashMap<>();
 
     private static final int COUNT = 25;
 
