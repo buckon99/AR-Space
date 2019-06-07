@@ -44,20 +44,49 @@ public class Login extends AppCompatActivity {
         // compare the user's input password and compare its hash-value to the expected value
             // if the credentials are correct, move on to the next activity
             // if not, send error message and re-do login
-        if (email.isEmpty() || pw.isEmpty()) {
-            Toast.makeText(this,"Please enter all required fields", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        if (checkAllFields(email, pw) && checkForEmail(email) && checkForPassword(pw)) {
             firebaseAuth.signInWithEmailAndPassword(email, pw)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             Intent goToMainScreen = new Intent(Login.this, MainActivity.class);
                             startActivity(goToMainScreen);
-                        }
-                        else {
+                        } else {
                             Toast.makeText(Login.this, "Credentials Invalid", Toast.LENGTH_SHORT).show();
                         }
                     });
+        }
+    }
+
+    // checks user's entries
+    // checks if all required fields are entered
+    public boolean checkAllFields(String email, String password) {
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter all required fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean checkForPassword(String password) {
+        if (password.isEmpty()) {
+            Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean checkForEmail(String email) {
+        if (email.isEmpty()) {
+            Toast.makeText(this, "Please enter an email", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else {
+            return true;
         }
     }
 }
