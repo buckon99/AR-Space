@@ -1,21 +1,23 @@
 package com.csc309.arspace.models;
 
-import android.support.annotation.NonNull;
+import android.graphics.Bitmap;
 import android.util.Log;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.support.constraint.motion.MotionScene.TAG;
 
 public class Product {
 
+    private Bitmap img;
     private String title;
     private String type;
     private double width;
@@ -25,11 +27,11 @@ public class Product {
     private String imgURL;
     private double price;
     private String info;
+    private String productUrl;
 
     public Product(String id, String title, String type,
                    double width, double height, double length,
-                   String imgURL, double price, String info)
-    {
+                   String imgURL, double price, String info, String productUrl) {
         this.id = id;
         this.title = title;
         this.type = type;
@@ -39,6 +41,19 @@ public class Product {
         this.imgURL = imgURL;
         this.price = price;
         this.info = info;
+        this.productUrl = productUrl;
+    }
+
+    public String getProductUrl() {
+        return this.productUrl;
+    }
+
+    public void addBitmap(Bitmap img) {
+        this.img = img;
+    }
+
+    public Bitmap getBitmap() {
+        return img;
     }
 
     public String getId() {
@@ -127,6 +142,7 @@ public class Product {
     public void addProduct(String userSavedProductName) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        assert currentUser != null;
         String currentUid = currentUser.getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference documentReference = db.document(currentUid + "/" + userSavedProductName);
@@ -134,25 +150,52 @@ public class Product {
         Map<String, Object> product = new HashMap<>();
         product.put("id", this.id);
         product.put("title", this.title);
+        product.put("type", this.type);
         product.put("width", this.width);
         product.put("height", this.height);
         product.put("length", this.length);
         product.put("imgURL", this.imgURL);
+        product.put("price", this.price);
+        product.put("info", this.info);
+        product.put("productURL", this.productUrl);
 
         documentReference.set(product)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error!", e));
     }
 
-    public void loadProduct(String userSavedProductName) {
+    public void loadProducts() {
+        ArrayList<Product> products = new ArrayList<>();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        String currentUid = currentUser.getUid();
+        String currentUid = null;
+        if (currentUser != null) {
+            currentUid = currentUser.getUid();
+        }
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = db.document(currentUid + "/" + userSavedProductName);
 
-        documentReference.get()
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error!", e));
+        assert currentUid != null;
+        db.collection(currentUid)
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            Map<String, Object> prodFields = document.getData();
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                            Product product = new Product(Objects.requireNonNull(prodFields.get("id")).toString(),
+                                    Objects.requireNonNull(prodFields.get("title")).toString(),
+                                    Objects.requireNonNull(prodFields.get("type")).toString(),
+                                    (Double)prodFields.get("width"),
+                                    (Double)prodFields.get("height"),
+                                    (Double)prodFields.get("length"),
+                                    Objects.requireNonNull(prodFields.get("imgURL")).toString(),
+                                    (Double)prodFields.get("price"),
+                                    Objects.requireNonNull(prodFields.get("info")).toString(),
+                                    Objects.requireNonNull(prodFields.get("productURL")).toString());
+                            products.add(product);
+                        }
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                });
     }
 }
