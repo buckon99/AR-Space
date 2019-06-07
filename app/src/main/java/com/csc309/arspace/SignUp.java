@@ -40,9 +40,8 @@ public class SignUp extends AppCompatActivity {
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString().trim(),
                         password.getText().toString().trim()).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                // THIS IS TEST. DELETE LATER
+
                                 // adds random sample products to the user's database
-                                //new Search();
                                 // notify the user that registration has been successful
                                 Toast.makeText(SignUp.this, "Successful", Toast.LENGTH_SHORT).show();
                                 // take user to main screen

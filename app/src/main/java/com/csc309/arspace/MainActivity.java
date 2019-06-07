@@ -122,8 +122,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private boolean mTwoPane;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,13 +130,6 @@ public class MainActivity extends AppCompatActivity {
         MainActivity parent = this;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        if (findViewById(R.id.product_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
         EditText search = findViewById(R.id.search);
         RecyclerView recyclerView = findViewById(R.id.product_list);
         search.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
@@ -185,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        adapter = new MainActivity.SimpleItemRecyclerViewAdapter(this, ProductsContent.ITEMS, mTwoPane);
+        adapter = new MainActivity.SimpleItemRecyclerViewAdapter(ProductsContent.ITEMS);
         recyclerView.setAdapter(adapter);
     }
 
@@ -212,27 +203,21 @@ public class MainActivity extends AppCompatActivity {
                 // which view you pass in doesn't matter, it is only used for the window tolken
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
                 Button viewProduct = popupView.findViewById(R.id.view);
-                viewProduct.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View view){
+                viewProduct.setOnClickListener((View v) -> {
                         String url = item.getProductUrl();
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(url));
                         context.startActivity(i);
-                    }
                 });
 
                 Button arView = popupView.findViewById(R.id.arView);
-                arView.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View view){
+                arView.setOnClickListener((View v) -> {
                         Intent intent = new Intent(context, SceneformActivity.class);
                         intent.putExtra("width", item.getWidth());
                         intent.putExtra("height", item.getHeight());
                         intent.putExtra("length", item.getLength());
 
                         context.startActivity(intent);
-                    }
                 });
                 Button saveBtn = popupView.findViewById(R.id.save);
                 if(save == 1) {
@@ -247,9 +232,9 @@ public class MainActivity extends AppCompatActivity {
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                    dialog.setOnDismissListener((DialogInterface dialogInterface) -> {
-                            popupWindow.dismiss();
-                    });
+                    dialog.setOnDismissListener((DialogInterface dialogInterface) ->
+                            popupWindow.dismiss()
+                    );
                 });
 
                 Button share = popupView.findViewById(R.id.share);
@@ -273,9 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         };
 
-        SimpleItemRecyclerViewAdapter(MainActivity parent,
-                                      List<Product> items,
-                                      boolean twoPane) {
+        SimpleItemRecyclerViewAdapter(List<Product> items) {
             mValues = items;
         }
 

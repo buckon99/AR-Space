@@ -24,7 +24,7 @@ public class Search
         // check empty keywords list
         if(keywords.length == 0)
         {
-            return null;
+            return results;
         }
 
         // construct search url
@@ -46,12 +46,12 @@ public class Search
         String jsonStr = getJSON(searchURL);
         if(jsonStr == null)
         {
-            return null;
+            return results;
         }
         JsonObject obj = parser.parse(jsonStr).getAsJsonObject();
         if(obj == null)
         {
-            return null;
+            return results;
         }
 
         // extract info from json object
@@ -98,7 +98,7 @@ public class Search
         String[] elements = measurements.split("\"");
         if(elements.length < 3)
         {
-            return null;
+            return new ArrayList<Double>();
         }
         boolean lengthFound = false;
         boolean widthFound = false;
@@ -160,7 +160,7 @@ public class Search
             }
             else
             {
-                return null;
+                return new ArrayList<Double>();
             }
         }
         if(heightFound)
@@ -176,7 +176,7 @@ public class Search
             }
             else
             {
-                return null;
+                return new ArrayList<Double>();
             }
         }
         if(lengthFound) {
@@ -190,13 +190,13 @@ public class Search
             }
             else
             {
-                return null;
+                return new ArrayList<Double>();
             }
 
         }
         if(dimensions.contains(0.0))
         {
-            return null;
+            return new ArrayList<Double>();
         }
         return dimensions;
     }
@@ -242,18 +242,22 @@ public class Search
 
 
         } catch (MalformedURLException ex) {
-            Log.d(TAG, "Error getting documents: ", ex);
+            Log.d(TAG, "bad url: ", ex);
         } catch (IOException ex) {
-            Log.d(TAG, "Error getting documents: ", ex);
+            Log.d(TAG, "IO Exception: ", ex);
         } finally {
             if (con != null) {
                 try {
                     con.disconnect();
                 } catch (Exception ex) {
-                    Log.d(TAG, "Error getting documents: ", ex);
+                    Log.d(TAG, "Error getting disconnecting: ", ex);
                 }
             }
         }
         return null;
+    }
+
+    private Search(){
+        /* removes public constructor */
     }
 }

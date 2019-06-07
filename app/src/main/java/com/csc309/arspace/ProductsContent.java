@@ -11,7 +11,6 @@ import java.util.Map;
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
  * <p>
- * TODO: Replace all uses of this class before publishing your app.
  */
 public class ProductsContent {
 
@@ -25,7 +24,6 @@ public class ProductsContent {
      */
     protected static final Map<String, Product> ITEM_MAP = new HashMap<>();
 
-    private static final int COUNT = 25;
 
     public static void addItem(Product item) {
         ITEMS.add(item);
@@ -42,6 +40,9 @@ public class ProductsContent {
             addItem(prod);
         }
 
+    }
+    private ProductsContent() {
+        /* hides implicit public constructor */
     }
 
 

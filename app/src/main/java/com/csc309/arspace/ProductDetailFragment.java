@@ -28,11 +28,12 @@ public class ProductDetailFragment extends Fragment {
      */
     private Product mItem;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+
     public ProductDetailFragment() {
+        /**
+         * Mandatory empty constructor for the fragment manager to instantiate the
+         * fragment (e.g. upon screen orientation changes).
+         */
     }
 
     @Override
