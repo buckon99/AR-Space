@@ -35,7 +35,6 @@ import java.util.Objects;
 import static android.support.constraint.motion.MotionScene.TAG;
 
 public class MainActivity extends AppCompatActivity {
-    private MainActivity parent;
     private RelativeLayout relLayout;
     private SimpleItemRecyclerViewAdapter adapter;
     private static int save = 0;
@@ -88,18 +87,18 @@ public class MainActivity extends AppCompatActivity {
 
                                                 }
 
-                                                runOnUiThread(() -> {
-                                                        adapter.notifyDataSetChanged();
-                                                });
+                                                runOnUiThread(() ->
+                                                        adapter.notifyDataSetChanged()
+                                                );
                                             });
                                         t.start();
 
                                     }
                                 } else {
-                                    Log.d(TAG, "Error getting documents: ", e);
+                                    Log.d(TAG, "Error getting documents: ");
                                 }
                             } catch (Exception e) {
-                                Log.d(TAG, "Error getting documents: ", e);
+                                Log.d(TAG, "Error in database: ", e);
                             }
                         });
                     });
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        parent = this;
+        MainActivity parent = this;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         if (findViewById(R.id.product_detail_container) != null) {
@@ -157,9 +156,7 @@ public class MainActivity extends AppCompatActivity {
                                     prod.addBitmap(bmp);
                                     ProductsContent.addItem(prod);
                                 }
-                                runOnUiThread(() -> {
-                                        adapter.notifyDataSetChanged();
-                                });
+                                runOnUiThread(() -> adapter.notifyDataSetChanged());
 
                             } catch (Exception e) {
 
@@ -176,12 +173,10 @@ public class MainActivity extends AppCompatActivity {
             });
         search.setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
                 // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                return event.getAction() == KeyEvent.ACTION_DOWN &&
 
-                    return true;
-                }
-                return false;
+                        keyCode == KeyEvent.KEYCODE_ENTER;
+
             });
         relLayout = findViewById(R.id.frameLayout);
 
@@ -195,14 +190,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<MainActivity.SimpleItemRecyclerViewAdapter.ViewHolder> {
+            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ProductViewHolder> {
 
-        private final MainActivity mParentActivity;
         private final List<Product> mValues;
-        private final boolean mTwoPane;
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        private final View.OnClickListener mOnClickListener = (View view) -> {
 
                 Context context = view.getContext();
                 Product item = (Product) view.getTag();
@@ -256,11 +247,8 @@ public class MainActivity extends AppCompatActivity {
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialogInterface) {
+                    dialog.setOnDismissListener((DialogInterface dialogInterface) -> {
                             popupWindow.dismiss();
-                        }
                     });
                 });
 
@@ -283,26 +271,23 @@ public class MainActivity extends AppCompatActivity {
                     popupWindow.dismiss();
                     return true;
                 });
-            }
         };
 
         SimpleItemRecyclerViewAdapter(MainActivity parent,
                                       List<Product> items,
                                       boolean twoPane) {
             mValues = items;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
         }
 
         @Override
-        public MainActivity.SimpleItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.product_list_content, parent, false);
-            return new MainActivity.SimpleItemRecyclerViewAdapter.ViewHolder(view);
+            return new ProductViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(final MainActivity.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(final ProductViewHolder holder, int position) {
 
             Product prod = mValues.get(position);
             holder.mIdView.setText(prod.getTitle());
@@ -324,19 +309,19 @@ public class MainActivity extends AppCompatActivity {
             return mValues.size();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ProductViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
             final ImageView mImgView;
             final TextView dimensions;
             final TextView price;
-            ViewHolder(View view) {
+            ProductViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
-                mImgView = (ImageView) view.findViewById(R.id.prodImg);
-                dimensions = (TextView) view.findViewById(R.id.dimensions);
-                price = (TextView) view.findViewById(R.id.price);
+                mIdView = view.findViewById(R.id.id_text);
+                mContentView = view.findViewById(R.id.content);
+                mImgView = view.findViewById(R.id.prodImg);
+                dimensions = view.findViewById(R.id.dimensions);
+                price = view.findViewById(R.id.price);
             }
         }
     }

@@ -54,7 +54,7 @@ public class ProductUnitTest {
         documentReference.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Product expectedProduct = documentSnapshot.toObject(Product.class);
-                    assertTrue(newProduct.equals(expectedProduct));
+                    assertTrue(newProduct.isEqual(expectedProduct));
                 });
     }
 }

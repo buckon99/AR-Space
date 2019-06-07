@@ -74,13 +74,6 @@ public class  SceneformActivity extends AppCompatActivity {
                         ControlRenderable = ControlStage.get();
                         Node base = new Node();
                         base.setRenderable(ControlRenderable);
-                        View buttonControlView = ControlRenderable.getView();
-                        Button controlButton = buttonControlView.findViewById(R.id.item_button);
-                        controlButton.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                // Code here executes on main thread after user presses button
-                            }
-                        });
                     }
                     catch (Exception ex) {
                         Utility.displayError(this, "Unable to load renderable", ex);
@@ -115,11 +108,8 @@ public class  SceneformActivity extends AppCompatActivity {
                     base.setRenderable(ControlRenderable);
                     View ControlsView = ControlRenderable.getView();
                     Button controlButton = ControlsView.findViewById(R.id.item_button);
-                    controlButton.setOnClickListener(new Button.OnClickListener() {
-                        public void onClick(View v) {
-                            andy.getTranslationController();
-                        }
-                    });
+                    controlButton.setOnClickListener(
+                        (View v) -> andy.getTranslationController());
                 });
     }
 
