@@ -12,37 +12,129 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.csc309.arspace.dummy.ProductsContent;
 import com.csc309.arspace.models.Product;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static android.support.constraint.motion.MotionScene.TAG;
 
 public class MainActivity extends AppCompatActivity {
     private MainActivity parent;
     private TextView mTextMessage;
     private RelativeLayout relLayout;
     private SimpleItemRecyclerViewAdapter adapter;
+    private static int SAVE = 0;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            EditText search = findViewById(R.id.search);
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    relLayout.setVisibility(View.INVISIBLE);
+                    SAVE = 1;
+                    search.setVisibility(View.INVISIBLE);
+                    ProductsContent.removeAll();
+                    adapter.notifyDataSetChanged();
+                    Thread thread = new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                            String currentUid = null;
+                            if (currentUser != null) {
+                                currentUid = currentUser.getUid();
+                            }
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                            assert currentUid != null;
+                            db.collection(currentUid)
+                                    .get().addOnCompleteListener(task -> {
+                                try {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                            Map<String, Object> prodFields = document.getData();
+                                            Log.d(TAG, document.getId() + " => " + document.getData());
+                                            Product product = new Product(Objects.requireNonNull(prodFields.get("id")).toString(),
+                                                    Objects.requireNonNull(prodFields.get("title")).toString(),
+                                                    Objects.requireNonNull(prodFields.get("type")).toString(),
+                                                    (Double) prodFields.get("width"),
+                                                    (Double) prodFields.get("height"),
+                                                    (Double) prodFields.get("length"),
+                                                    Objects.requireNonNull(prodFields.get("imgURL")).toString(),
+                                                    (Double) prodFields.get("price"),
+                                                    Objects.requireNonNull(prodFields.get("info")).toString(),
+                                                    Objects.requireNonNull(prodFields.get("productURL")).toString());
+                                            Thread thread = new Thread(new Runnable() {
+
+                                                @Override
+                                                public void run() {
+                                                    URL url;
+                                                    try {
+                                                        url = new URL(product.getImgURL());
+                                                        Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                                                        product.addBitmap(bmp);
+                                                        ProductsContent.addItem(product);
+                                                    }catch(MalformedURLException ex){
+                                                        Log.d(TAG, "Malformed URL ", task.getException());
+                                                    }catch (IOException e) {
+                                                        Log.d(TAG, "IO Exception ", task.getException());
+
+                                                    }
+
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            adapter.notifyDataSetChanged();
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                            thread.start();
+
+                                        }
+                                    } else {
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println(e);
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
+                            });
+                        }
+                    });
+                    thread.start();
+                    relLayout.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_search:
+                    SAVE = 0;
+
+                    ProductsContent.removeAll();
+                    adapter.notifyDataSetChanged();
                     relLayout.setVisibility(View.VISIBLE);
+                    search.setVisibility(View.VISIBLE);
                     return true;
                 case R.id.navigation_settings:
                     relLayout.setVisibility(View.INVISIBLE);
+                    search.setVisibility(View.VISIBLE);
                     return true;
             }
             return false;
@@ -93,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try  {
+                                ProductsContent.removeAll();
                                 String[] values = search.getText().toString().split(" ");
                                 ArrayList<Product> products = Search.searchProduct(values);
                                 for(int i = 0; i < products.size(); i++) {
@@ -103,8 +196,13 @@ public class MainActivity extends AppCompatActivity {
                                     prod.addBitmap(bmp);
                                     ProductsContent.addItem(prod);
                                 }
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
 
-                                adapter.notifyDataSetChanged();
                                 //recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(parent, products, mTwoPane));
                                 //recyclerView.setAdapter(new MainActivity.SimpleItemRecyclerViewAdapter(parent, products, mTwoPane));
 
@@ -193,11 +291,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 Button save = popupView.findViewById(R.id.save);
+                if(SAVE == 1) {
+                    save.setText("Unsave");
+                }
                 save.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View view){
 
-                        item.addProduct(item.getProductUrl());
+                        item.addProduct(item.getId());
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setMessage("Item Saved")
                                 .setTitle("Item Saved");

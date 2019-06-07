@@ -37,4 +37,17 @@ public class ProductsContent {
         ITEM_MAP.put(item.getTitle(), item);
     }
 
+    public static void removeAll() {
+        ITEMS.clear();
+        ITEM_MAP.clear();
+    }
+
+    public static void addAll(ArrayList<Product> items) {
+        for(Product prod: items) {
+            addItem(prod);
+        }
+
+    }
+
+
 }

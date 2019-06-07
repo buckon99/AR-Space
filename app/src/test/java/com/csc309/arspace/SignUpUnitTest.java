@@ -10,7 +10,7 @@ public class SignUpUnitTest {
         SignUp signUp = new SignUp();
         String pw = "password";
         String confirm = "password";
-        assertTrue(signUp.confirmPassword(pw, confirm));
+        assertTrue(signUp.checkPassword(pw, confirm));
     }
 
     @Test

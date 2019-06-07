@@ -163,7 +163,7 @@ public class Product {
                 .addOnFailureListener(e -> Log.w(TAG, "Error!", e));
     }
 
-    public void loadProducts() {
+    public static void loadProducts() {
         ArrayList<Product> products = new ArrayList<>();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();

@@ -37,6 +37,20 @@ public class ProductUnitTest {
         newProduct.addProduct("MyFirstProduct");
         documentReference = db.document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()
                 + "/" + "MyFirstProduct");
+        assertTrue(documentReference != null);
+    }
+    @Test
+    public void testGetProduct() {
+        Login login = new Login();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DocumentReference documentReference;
+
+        firebaseAuth.signInWithEmailAndPassword("ayoo97@gmail.com", "Password1")
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Success!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error!", e));
+        documentReference = db.document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()
+                + "/" + "MyFirstProduct");
         documentReference.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Product expectedProduct = documentSnapshot.toObject(Product.class);

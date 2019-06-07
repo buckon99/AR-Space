@@ -64,7 +64,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     // checks if the two given passwords match
-    private boolean checkPassword(String pw, String pwConf) {
+    public boolean checkPassword(String pw, String pwConf) {
         if (!(pw.equals(pwConf))) {
             Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show();
             return false;
