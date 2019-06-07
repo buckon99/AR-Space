@@ -32,7 +32,9 @@ public class SignUp extends AppCompatActivity {
         // if you click sign up button...
         signup.setOnClickListener(view -> {
             // check if passwords match AND if all fields are entered
-            if (validateEntries() &&
+            if (validateEntries(this.email.getText().toString().trim(),
+                    this.password.getText().toString().trim(),
+                    this.confirmPassword.getText().toString().trim()) &&
                     checkPassword(password.getText().toString().trim(),
                             confirmPassword.getText().toString().trim())) {
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString().trim(),
@@ -73,11 +75,9 @@ public class SignUp extends AppCompatActivity {
     }
 
     // checks if all required fields are entered
-    private boolean validateEntries() {
-        String email = this.email.getText().toString().trim();
-        String password = this.password.getText().toString().trim();
+    public boolean validateEntries(String email, String password, String confirmPassword) {
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "Please enter all required fields", Toast.LENGTH_SHORT).show();
             return false;
         }

@@ -72,6 +72,15 @@ public class  SceneformActivity extends AppCompatActivity {
 
                     try {
                         ControlRenderable = ControlStage.get();
+                        Node base = new Node();
+                        base.setRenderable(ControlRenderable);
+                        View buttonControlView = ControlRenderable.getView();
+                        Button controlButton = buttonControlView.findViewById(R.id.item_button);
+                        controlButton.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                // Code here executes on main thread after user presses button
+                            }
+                        });
                     }
                     catch (InterruptedException | ExecutionException ex) {
                         Utility.displayError(this, "Unable to load renderable", ex);

@@ -7,7 +7,15 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
 
-public class SearchUnitTest {
+public class SearchSingleUnitTest {
+    @Test
+    public void searchSingle()
+    {
+        String[] keywords = new String[] {"sofa"};
+        Search.searchProduct(keywords);
+        assertTrue(true);
+    }
+
     @Test
     public void searchMassSingle()
     {
@@ -35,33 +43,7 @@ public class SearchUnitTest {
     }
 
     @Test
-    public void searchMassMultiple()
-    {
-        String[] keywords = new String[] {"silver",  "storage"};
-        Search.searchProduct(keywords);
-        keywords = new String[] {"new", "couch"};
-        Search.searchProduct(keywords);
-        keywords = new String[] {"magic", "blender"};
-        Search.searchProduct(keywords);
-        keywords = new String[] {"small", "shelf"};
-        Search.searchProduct(keywords);
-        keywords = new String[] {"large", "carpet"};
-        Search.searchProduct(keywords);
-        keywords = new String[] {"coffee", "table"};
-        Search.searchProduct(keywords);
-        assertTrue(true);
-    }
-
-    @Test
-    public void searchInvalid1()
-    {
-        String[] keywords = new String[] {"flottebo",  "book"};
-        ArrayList<Product> actual = Search.searchProduct(keywords);
-        assertTrue(actual != null && actual.isEmpty());
-    }
-
-    @Test
-    public void searchInvalid2()
+    public void searchInvalid()
     {
         String[] keywords = new String[] {"digital"};
         ArrayList<Product> actual = Search.searchProduct(keywords);
@@ -76,11 +58,4 @@ public class SearchUnitTest {
         assertTrue(actual != null && actual.isEmpty());
     }
 
-    @Test
-    public void searchEmptyMultiple()
-    {
-        String[] keywords = new String[] {"asdnoajdoiajdojw", "wowowowowow"};
-        ArrayList<Product> actual = Search.searchProduct(keywords);
-        assertTrue(actual != null && actual.isEmpty());
-    }
 }
