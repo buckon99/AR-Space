@@ -162,13 +162,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return false;
             });
-        search.setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
-                // If the event is a key-down event on the "enter" button
-                return event.getAction() == KeyEvent.ACTION_DOWN &&
+        search.setOnKeyListener((View v, int keyCode, KeyEvent event) -> event.getAction() == KeyEvent.ACTION_DOWN &&
 
-                        keyCode == KeyEvent.KEYCODE_ENTER;
-
-            });
+                        keyCode == KeyEvent.KEYCODE_ENTER);
         relLayout = findViewById(R.id.frameLayout);
 
         assert recyclerView != null;
@@ -246,9 +242,9 @@ public class MainActivity extends AppCompatActivity {
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                    dialog.setOnDismissListener((DialogInterface dialogInterface) -> {
-                            popupWindow.dismiss();
-                    });
+                    dialog.setOnDismissListener((DialogInterface dialogInterface) ->
+                            popupWindow.dismiss()
+                    );
                 });
 
                 // dismiss the popup window when touched

@@ -11,30 +11,25 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class SignUp extends AppCompatActivity {
 
-    private EditText email;
-    private EditText password;
-    private EditText confirmPassword;
-    private FirebaseAuth firebaseAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
-        email = findViewById(R.id.email);
-        password = findViewById(R.id.password);
-        confirmPassword = findViewById(R.id.confirm_password);
+        EditText email = findViewById(R.id.email);
+        EditText password = findViewById(R.id.password);
+        EditText confirmPassword = findViewById(R.id.confirm_password);
         Button signup = findViewById(R.id.signup_button);
         TextView login = findViewById(R.id.login_button);
 
         // if you click sign up button...
         signup.setOnClickListener(view -> {
             // check if passwords match AND if all fields are entered
-            if (validateEntries(this.email.getText().toString().trim(),
-                    this.password.getText().toString().trim(),
-                    this.confirmPassword.getText().toString().trim()) &&
+            if (validateEntries(email.getText().toString().trim(),
+                    password.getText().toString().trim(),
+                    confirmPassword.getText().toString().trim()) &&
                     checkPassword(password.getText().toString().trim(),
                             confirmPassword.getText().toString().trim())) {
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString().trim(),

@@ -98,7 +98,7 @@ public class Search
         String[] elements = measurements.split("\"");
         if(elements.length < 3)
         {
-            return new ArrayList<Double>();
+            return new ArrayList<>();
         }
         boolean lengthFound = false;
         boolean widthFound = false;
@@ -160,7 +160,7 @@ public class Search
             }
             else
             {
-                return new ArrayList<Double>();
+                return new ArrayList<>();
             }
         }
         if(heightFound)
@@ -176,7 +176,7 @@ public class Search
             }
             else
             {
-                return new ArrayList<Double>();
+                return new ArrayList<>();
             }
         }
         if(lengthFound) {
@@ -190,13 +190,13 @@ public class Search
             }
             else
             {
-                return new ArrayList<Double>();
+                return new ArrayList<>();
             }
 
         }
         if(dimensions.contains(0.0))
         {
-            return new ArrayList<Double>();
+            return new ArrayList<>();
         }
         return dimensions;
     }

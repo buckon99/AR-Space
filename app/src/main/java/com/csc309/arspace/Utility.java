@@ -24,9 +24,11 @@ import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
 import com.google.ar.core.exceptions.UnavailableException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 
+import static com.google.ar.core.ArCoreApk.InstallStatus.INSTALLED;
+import static com.google.ar.core.ArCoreApk.InstallStatus.INSTALL_REQUESTED;
+
 public class Utility {
     private static final String TAG = "UtilityChecks";
-    private static final double MIN_OPENGL_VERSION = 3.0;
 
     /**
      * Creates and shows a Toast containing an error message. If there was an exception passed in it
@@ -73,11 +75,8 @@ public class Utility {
         Session session = null;
         // if we have the camera permission, create the session
         if (hasCameraPermission(activity)) {
-            switch (ArCoreApk.getInstance().requestInstall(activity, !installRequested)) {
-                case INSTALL_REQUESTED:
-                    return null;
-                case INSTALLED:
-                    break;
+            if (ArCoreApk.getInstance().requestInstall(activity, !installRequested) == INSTALL_REQUESTED) {
+                return null;
             }
             session = new Session(activity);
             // IMPORTANT!!!  ArSceneView requires the `LATEST_CAMERA_IMAGE` non-blocking update mode.
@@ -131,4 +130,8 @@ public class Utility {
         }
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
     }
+    private Utility() {
+        /* hides public constructor */
+    }
+
 }

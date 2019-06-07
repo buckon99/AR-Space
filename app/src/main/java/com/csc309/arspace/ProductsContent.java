@@ -35,7 +35,7 @@ public class ProductsContent {
         ITEM_MAP.clear();
     }
 
-    public static void addAll(ArrayList<Product> items) {
+    public static void addAll(List<Product> items) {
         for(Product prod: items) {
             addItem(prod);
         }

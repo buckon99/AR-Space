@@ -22,10 +22,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_product_detail);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener((View view) -> {
+        fab.setOnClickListener((View view) ->
                 Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-        });
+                        .setAction("Action", null).show()
+        );
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity

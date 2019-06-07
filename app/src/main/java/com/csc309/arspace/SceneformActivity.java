@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -17,11 +16,7 @@ import android.widget.Toast;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
-import com.google.ar.core.Session;
-import com.google.ar.core.exceptions.CameraNotAvailableException;
-import com.google.ar.core.exceptions.UnavailableException;
 import com.google.ar.sceneform.AnchorNode;
-import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.*;
@@ -30,7 +25,6 @@ import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * This is an example activity that uses the Sceneform UX package to make common AR tasks easier.
@@ -39,9 +33,9 @@ public class  SceneformActivity extends AppCompatActivity {
     private static final String TAG = SceneformActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
 
-    private ArFragment arFragment;
+
     private ModelRenderable cubeRenderable;
-    private ViewRenderable ControlRenderable;
+    private ViewRenderable controlRenderable;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -55,14 +49,14 @@ public class  SceneformActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_ux);
-        arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+        ArFragment arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         float width = (float)getIntent().getDoubleExtra("width", 0) * 0.0254f;
         float height = (float)getIntent().getDoubleExtra("height", 0) * 0.0254f;
         float length = (float)getIntent().getDoubleExtra("length", 0) * 0.0254f;
 
-        CompletableFuture<ViewRenderable> ControlStage = ViewRenderable.builder().setView(this, R.layout.activity_sceneform).build();
+        CompletableFuture<ViewRenderable> controlStage = ViewRenderable.builder().setView(this, R.layout.activity_sceneform).build();
 
-        CompletableFuture.allOf(ControlStage).handle(
+        CompletableFuture.allOf(controlStage).handle(
                 (notUsed, throwable) -> {
 
                     if (throwable != null) {
@@ -71,9 +65,9 @@ public class  SceneformActivity extends AppCompatActivity {
                     }
 
                     try {
-                        ControlRenderable = ControlStage.get();
+                        controlRenderable = controlStage.get();
                         Node base = new Node();
-                        base.setRenderable(ControlRenderable);
+                        base.setRenderable(controlRenderable);
                     }
                     catch (Exception ex) {
                         Utility.displayError(this, "Unable to load renderable", ex);
@@ -84,9 +78,9 @@ public class  SceneformActivity extends AppCompatActivity {
 
         MaterialFactory.makeOpaqueWithColor(this, new Color(android.graphics.Color.RED))
                 .thenAccept(
-                        material -> {
-                            cubeRenderable = ShapeFactory.makeCube(new Vector3(width, height, length), new Vector3(0, height/2, 0), material);
-                        });
+                        material ->
+                            cubeRenderable = ShapeFactory.makeCube(new Vector3(width, height, length), new Vector3(0, height/2, 0), material)
+                        );
 
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
@@ -105,9 +99,9 @@ public class  SceneformActivity extends AppCompatActivity {
                     andy.setRenderable(cubeRenderable);
                     Node base = new Node();
                     base.setParent(andy);
-                    base.setRenderable(ControlRenderable);
-                    View ControlsView = ControlRenderable.getView();
-                    Button controlButton = ControlsView.findViewById(R.id.item_button);
+                    base.setRenderable(controlRenderable);
+                    View controlsView = controlRenderable.getView();
+                    Button controlButton = controlsView.findViewById(R.id.item_button);
                     controlButton.setOnClickListener(
                         (View v) -> andy.getTranslationController());
                 });
