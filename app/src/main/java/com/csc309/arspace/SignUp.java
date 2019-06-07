@@ -33,7 +33,7 @@ public class SignUp extends AppCompatActivity {
         signup.setOnClickListener(view -> {
             // check if passwords match AND if all fields are entered
             if (validateEntries() &&
-                    confirmPassword(password.getText().toString().trim(),
+                    checkPassword(password.getText().toString().trim(),
                             confirmPassword.getText().toString().trim())) {
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString().trim(),
                         password.getText().toString().trim()).addOnCompleteListener(task -> {
@@ -62,7 +62,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     // checks if the two given passwords match
-    private boolean confirmPassword(String pw, String pwConf) {
+    private boolean checkPassword(String pw, String pwConf) {
         if (!(pw.equals(pwConf))) {
             Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show();
             return false;
